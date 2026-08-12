@@ -23,9 +23,12 @@ config :unclickbaiter, UnclickbaiterWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "2F/NZ51FSoQBNhBOfhzEhe2dcE1JOHYnk9EgtyjCO37m3FJlcdPioeUvuNoC4oKb",
+  secret_key_base:
+    "2F/NZ51FSoQBNhBOfhzEhe2dcE1JOHYnk9EgtyjCO37m3FJlcdPioeUvuNoC4oKb",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:unclickbaiter, ~w(--sourcemap=inline --watch)]},
+    esbuild:
+      {Esbuild, :install_and_run,
+       [:unclickbaiter, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:unclickbaiter, ~w(--watch)]}
   ]
 

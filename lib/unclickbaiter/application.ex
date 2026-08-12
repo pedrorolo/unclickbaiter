@@ -10,7 +10,8 @@ defmodule Unclickbaiter.Application do
     children = [
       UnclickbaiterWeb.Telemetry,
       Unclickbaiter.Repo,
-      {DNSCluster, query: Application.get_env(:unclickbaiter, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:unclickbaiter, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Unclickbaiter.PubSub},
       # Start a worker by calling: Unclickbaiter.Worker.start_link(arg)
       # {Unclickbaiter.Worker, arg},

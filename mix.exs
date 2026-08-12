@@ -91,8 +91,15 @@ defmodule Unclickbaiter.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind unclickbaiter", "esbuild unclickbaiter"],
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing"
+      ],
+      "assets.build": [
+        "compile",
+        "tailwind unclickbaiter",
+        "esbuild unclickbaiter"
+      ],
       "assets.deploy": [
         "tailwind unclickbaiter --minify",
         "esbuild unclickbaiter --minify",

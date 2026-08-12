@@ -17,7 +17,8 @@ config :unclickbaiter, Unclickbaiter.Repo,
 # you can enable the server option below.
 config :unclickbaiter, UnclickbaiterWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "EHhOBMGytqZt9LAgEpw4ii0onTRVP/fp+Hc0HxU2HyIUaVKDAO/WaXejnQGT6R/5",
+  secret_key_base:
+    "EHhOBMGytqZt9LAgEpw4ii0onTRVP/fp+Hc0HxU2HyIUaVKDAO/WaXejnQGT6R/5",
   server: false
 
 # In test we don't send emails

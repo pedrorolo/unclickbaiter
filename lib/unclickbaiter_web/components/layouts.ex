@@ -41,7 +41,9 @@ defmodule UnclickbaiterWeb.Layouts do
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold">Unclickbaiter</h1>
-          <p class="text-sm text-muted">Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.</p>
+          <p class="text-sm text-muted">
+            Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.
+          </p>
         </div>
 
         <div class="flex items-center gap-4">
@@ -53,9 +55,9 @@ defmodule UnclickbaiterWeb.Layouts do
     <main class="px-4 py-12">
       <div class="max-w-4xl mx-auto">
         <%= if is_function(@inner_block) do %>
-          <%= @inner_block.() %>
+          {@inner_block.()}
         <% else %>
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         <% end %>
       </div>
     </main>
@@ -72,7 +74,10 @@ defmodule UnclickbaiterWeb.Layouts do
       <.flash_group flash={@flash} />
   """
   attr :flash, :map, required: true, doc: "the map of flash messages"
-  attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
+
+  attr :id, :string,
+    default: "flash-group",
+    doc: "the optional id of flash container"
 
   def flash_group(assigns) do
     ~H"""
@@ -128,7 +133,10 @@ defmodule UnclickbaiterWeb.Layouts do
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
       >
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon
+          name="hero-computer-desktop-micro"
+          class="size-4 opacity-75 hover:opacity-100"
+        />
       </button>
 
       <button
