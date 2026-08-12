@@ -1,0 +1,21 @@
+#!/bin/sh
+# Git pre-commit hook: run mix precommit
+# Exit non-zero to block commit if checks fail.
+
+# Prefer local mix in PATH; if mix isn't available, fail fast.
+if ! command -v mix >/dev/null 2>&1; then
+  echo "mix not found in PATH; please install Elixir and Mix or run 'mise install'"
+  exit 1
+fi
+
+echo "Running mix precommit..."
+# Run in the repo root
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# Allow passing through CI envs; but respect failure to block commit
+if ! mix precommit; then
+  echo "mix precommit failed. Aborting commit."
+  exit 1
+fi
+
+exit 0
