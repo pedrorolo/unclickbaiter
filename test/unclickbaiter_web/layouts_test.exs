@@ -1,6 +1,5 @@
 defmodule UnclickbaiterWeb.LayoutsTest do
   use ExUnit.Case, async: true
-  import Phoenix.Component
   import Phoenix.LiveViewTest
 
   test "app renders title, description and inner content" do

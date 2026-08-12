@@ -15,11 +15,12 @@ defmodule Unclickbaiter.DataCase do
   """
 
   use ExUnit.CaseTemplate
+  alias Ecto.Adapters.SQL.Sandbox, as: SQLSandbox
 
   using do
     quote do
-      alias Unclickbaiter.Repo
       alias Ecto.Adapters.SQL.Sandbox, as: SQLSandbox
+      alias Unclickbaiter.Repo
 
       import Ecto
       import Ecto.Changeset
@@ -38,11 +39,11 @@ defmodule Unclickbaiter.DataCase do
   """
   def setup_sandbox(tags) do
     pid =
-      Ecto.Adapters.SQL.Sandbox.start_owner!(Unclickbaiter.Repo,
+      SQLSandbox.start_owner!(Unclickbaiter.Repo,
         shared: not tags[:async]
       )
 
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    on_exit(fn -> SQLSandbox.stop_owner(pid) end)
   end
 
   @doc """

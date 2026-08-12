@@ -29,11 +29,12 @@ defmodule UnclickbaiterWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: UnclickbaiterWeb.Gettext
 
-  alias Phoenix.LiveView.JS
-  alias Phoenix.HTML.Form
-  alias Phoenix.HTML.FormField
-  alias Phoenix.LiveView.LiveStream
   alias Phoenix.Flash
+  alias Phoenix.HTML.Form
+
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.LiveStream
 
   @doc """
   Renders flash notices.
@@ -69,7 +70,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
 
     ~H"""
     <div
-      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      :if={msg = render_slot(@inner_block) || Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
@@ -201,7 +202,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
       ~w(checkbox color date datetime-local email file month number password
                search select tel text textarea time url week hidden)
 
-  attr :field, Phoenix.HTML.FormField,
+  attr :field, FormField,
     doc:
       "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -227,7 +228,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
       ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
-  def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+  def input(%{field: %FormField{} = field} = assigns) do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
 
     assigns
@@ -249,7 +250,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -295,7 +296,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
           {@rest}
         >
           <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
+          {Form.options_for_select(@options, @value)}
         </select>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -316,7 +317,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
             @errors != [] && (@error_class || "textarea-error")
           ]}
           {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+        >{Form.normalize_value("textarea", @value)}</textarea>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -333,7 +334,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
           type={@type}
           name={@name}
           id={@id}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          value={Form.normalize_value(@type, @value)}
           class={[
             @class || "w-full input",
             @errors != [] && (@error_class || "input-error")
@@ -417,7 +418,7 @@ defmodule UnclickbaiterWeb.CoreComponents do
 
   def table(assigns) do
     assigns =
-      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
+      with %{rows: %LiveStream{}} <- assigns do
         assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
       end
 
