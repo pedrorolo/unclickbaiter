@@ -12,7 +12,8 @@ defmodule Unclickbaiter.MixProject do
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
-      test_coverage: test_coverage()
+      test_coverage: test_coverage(),
+      preferred_cli_env: [credo: :dev]
     ]
   end
 
