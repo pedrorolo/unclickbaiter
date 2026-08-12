@@ -29,7 +29,7 @@ defmodule Unclickbaiter.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test]
+      preferred_envs: [precommit: :test, predeploy: :test]
     ]
   end
 
@@ -98,7 +98,13 @@ defmodule Unclickbaiter.MixProject do
         "esbuild unclickbaiter --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "compile --warnings-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "test --cover",
+        "credo --strict"
+      ]
     ]
   end
 
