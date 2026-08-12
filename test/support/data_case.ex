@@ -19,6 +19,7 @@ defmodule Unclickbaiter.DataCase do
   using do
     quote do
       alias Unclickbaiter.Repo
+      alias Ecto.Adapters.SQL.Sandbox, as: SQLSandbox
 
       import Ecto
       import Ecto.Changeset

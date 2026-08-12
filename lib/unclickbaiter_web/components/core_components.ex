@@ -30,6 +30,10 @@ defmodule UnclickbaiterWeb.CoreComponents do
   use Gettext, backend: UnclickbaiterWeb.Gettext
 
   alias Phoenix.LiveView.JS
+  alias Phoenix.HTML.Form
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.LiveStream
+  alias Phoenix.Flash
 
   @doc """
   Renders flash notices.
