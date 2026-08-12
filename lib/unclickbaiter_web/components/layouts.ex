@@ -29,42 +29,34 @@ defmodule UnclickbaiterWeb.Layouts do
 
   attr :current_scope, :map,
     default: nil,
-    doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
+    doc: "the current scope (optional)"
 
   slot :inner_block, required: true
 
   def app(assigns) do
+    assigns = assign_new(assigns, :current_scope, fn -> nil end)
+
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://phoenix.hexdocs.pm/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
-        </ul>
+    <header class="px-6 py-6 border-b bg-base-100">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">Unclickbaiter</h1>
+          <p class="text-sm text-muted">Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <.theme_toggle />
+        </div>
       </div>
     </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
+    <main class="px-4 py-12">
+      <div class="max-w-4xl mx-auto">
+        <%= if is_function(@inner_block) do %>
+          <%= @inner_block.() %>
+        <% else %>
+          <%= render_slot(@inner_block) %>
+        <% end %>
       </div>
     </main>
 

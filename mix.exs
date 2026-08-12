@@ -11,7 +11,8 @@ defmodule Unclickbaiter.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      test_coverage: test_coverage()
     ]
   end
 
@@ -97,6 +98,20 @@ defmodule Unclickbaiter.MixProject do
         "phx.digest"
       ],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+    ]
+  end
+
+  defp test_coverage do
+    [
+      ignore_modules: [
+        UnclickbaiterWeb.PageHTML,
+        UnclickbaiterWeb.CoreComponents,
+        Unclickbaiter.DataCase,
+        UnclickbaiterWeb,
+        Unclickbaiter.Repo,
+        UnclickbaiterWeb.ErrorHTML,
+        Unclickbaiter.Application
+      ]
     ]
   end
 end
