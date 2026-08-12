@@ -3,7 +3,7 @@
 
 [tools.pipx]
 # Use the latest pipx available
-version = "latest"
+version = "1.16.6"
 # CLI packages to install globally (via pipx). Adjust as needed.
 packages = [
   "pre-commit",
@@ -13,8 +13,8 @@ packages = [
 
 [tools.elixir]
 # Request the latest Elixir release
-version = "latest"
+version = "1.20.3"
 # Install the latest compatible Erlang/OTP runtime
-otp = "latest"
+otp = "29.0.5"
 # Default mix environment to use when running mix tasks
 mix_env = "dev"
