@@ -1,0 +1,20 @@
+# mise.toml — tooling environment for this project
+# Defines language/tool runtimes to be installed/used by automation.
+
+[tools.pipx]
+# Use the latest pipx available
+version = "latest"
+# CLI packages to install globally (via pipx). Adjust as needed.
+packages = [
+  "pre-commit",
+  "ruff",
+  "black",
+]
+
+[tools.elixir]
+# Request the latest Elixir release
+version = "latest"
+# Install the latest compatible Erlang/OTP runtime
+otp = "latest"
+# Default mix environment to use when running mix tasks
+mix_env = "dev"
