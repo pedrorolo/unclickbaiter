@@ -4,10 +4,10 @@
 [tools.pipx]
 # Use the latest pipx available
 version = "1.16.6"
-# CLI packages to install globally (via pipx). Adjust as needed.
-packages = [
-  "gigalixir"
-]
+# CLI packages to install globally (via pipx).
+# Note: tool 'ise' may not accept a 'packages' field here; listing removed to avoid warnings.
+# Recommended: install via pipx manually (e.g., pipx install gigalixir)
+
 
 [tools.elixir]
 # Request the latest Elixir release
@@ -21,12 +21,9 @@ mix_env = "dev"
 # Request the explicit npm release
 version = "12.0.2"
 # Global npm packages to install
-packages = [
-  "esbuild",
-]
+# Note: 'packages' field removed to avoid mise/ise warnings. Install esbuild via npm if needed (npm install -g esbuild)
 
-[packages.apt]
-# Debian/Ubuntu packages to install for Linux users
-packages = [
-  "inotify-tools",
-]
+
+# Apt packages (removed 'packages' field to avoid warnings)
+# Recommended manual install on Debian/Ubuntu: sudo apt-get install -y inotify-tools
+
