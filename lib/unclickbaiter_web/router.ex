@@ -18,6 +18,11 @@ defmodule UnclickbaiterWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/sites", SiteLive.Index, :index
+    live "/sites/new", SiteLive.Form, :new
+    live "/sites/:id", SiteLive.Show, :show
+    live "/sites/:id/edit", SiteLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.
