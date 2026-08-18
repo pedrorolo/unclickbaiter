@@ -65,17 +65,6 @@ defmodule UnclickbaiterWeb.PreviewMetadata do
   attr :twitter_card, :string, default: "summary_large_image"
 
   def preview_metadata(assigns) do
-    # allow passing the whole struct via assigns[:preview_metadata]
-    assigns = assign_new(assigns, :preview_metadata, fn -> nil end)
-
-    assigns = assign_new(assigns, :title, fn -> assigns.preview_metadata && assigns.preview_metadata.title end)
-    assigns = assign_new(assigns, :description, fn -> assigns.preview_metadata && assigns.preview_metadata.description end)
-    assigns = assign_new(assigns, :url, fn -> assigns.preview_metadata && assigns.preview_metadata.url end)
-    assigns = assign_new(assigns, :image, fn -> assigns.preview_metadata && assigns.preview_metadata.image end)
-    assigns = assign_new(assigns, :site_name, fn -> assigns.preview_metadata && assigns.preview_metadata.site_name end)
-    assigns = assign_new(assigns, :type, fn -> assigns.preview_metadata && assigns.preview_metadata.type end)
-    assigns = assign_new(assigns, :twitter_card, fn -> assigns.preview_metadata && assigns.preview_metadata.twitter_card end)
-
     og =
       new(%{
         title: assigns.title,

@@ -36,7 +36,6 @@ defmodule UnclickbaiterWeb.Layouts do
 
   def app(assigns) do
     assigns = assign_new(assigns, :current_scope, fn -> nil end)
-    assigns = assign_new(assigns, :preview_metadata, fn -> UnclickbaiterWeb.PreviewMetadata.new() end)
 
     ~H"""
     <header class="px-6 py-6 border-b bg-base-100">
