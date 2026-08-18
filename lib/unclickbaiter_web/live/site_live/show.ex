@@ -50,8 +50,8 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
 
     {:ok,
      socket
-     |> assign(:page_title, site.title)
-     |> assign(:page_description, site.description)
-     |> assign(:site, site)}
+     |> assign(:site, site)
+     |> assign(:og, UnclickbaiterWeb.OpenGraph.from_site(site))}
   end
+
 end

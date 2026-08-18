@@ -1,9 +1,6 @@
 defmodule UnclickbaiterWeb.OpenGraph do
   @moduledoc """
-  Small OpenGraph struct and helpers.
-
-  Provides a simple OpenGraph record and a convenience function to
-  extract it from a %Unclickbaiter.Sites.Site{} struct.
+  Small OpenGraph struct and helpers used for rendering preview metadata.
   """
 
   @derive {Inspect, only: [:title, :description, :url, :image, :site_name]}
@@ -26,6 +23,14 @@ defmodule UnclickbaiterWeb.OpenGraph do
           type: String.t() | nil,
           twitter_card: String.t() | nil
         }
+
+  @doc """
+  Create a new OpenGraph struct from a map of attrs.
+  """
+  @spec new(map() | keyword()) :: t()
+  def new(attrs \\ %{}) do
+    struct(__MODULE__, attrs)
+  end
 
   @doc """
   Build an OpenGraph struct from a Site struct.

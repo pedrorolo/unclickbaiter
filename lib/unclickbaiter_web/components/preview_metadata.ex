@@ -1,4 +1,4 @@
-defmodule UnclickbaiterWeb.MetaTags do
+defmodule UnclickbaiterWeb.PreviewMetadata do
   use Phoenix.Component
 
   alias UnclickbaiterWeb.OpenGraph
@@ -30,22 +30,25 @@ defmodule UnclickbaiterWeb.MetaTags do
 
   defp build_og_from_assigns(assigns) do
     cond do
+      assigns[:og] ->
+        assigns.og
+
       assigns[:site] ->
         OpenGraph.from_site(assigns.site)
 
       assigns[:page_title] || assigns[:page_description] ||
           assigns[:page_image_url] ->
-        %OpenGraph{
+        OpenGraph.new(%{
           title: assigns[:page_title],
           description: assigns[:page_description],
           url: assigns[:page_url] || nil,
           image: assigns[:page_image_url] || nil,
           type: "website",
           twitter_card: "summary_large_image"
-        }
+        })
 
       true ->
-        %OpenGraph{}
+        OpenGraph.new()
     end
   end
 end
