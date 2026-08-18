@@ -4,7 +4,7 @@ defmodule UnclickbaiterWeb.Layouts do
   used by your application.
   """
   use UnclickbaiterWeb, :html
-  import UnclickbaiterWeb.PreviewMetadata
+  import UnclickbaiterWeb.Components.PreviewMetadata
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML

@@ -35,7 +35,7 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
             mounted() {
               setTimeout(() => {
                 window.location.href = this.el.dataset.url
-              }, 3000)
+              }, 10000)
             }
           }
         </script>
@@ -51,17 +51,17 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     {:ok,
      socket
      |> assign(:site, site)
-     |> assign(:preview_metadata, site_to_preview_metadata(site))}
+     |> assign(:metadata, site_to_metadata(site))}
   end
 
-  defp site_to_preview_metadata(site) do
-    UnclickbaiterWeb.PreviewMetadata.new(%{
+  defp site_to_metadata(site) do
+    %{
       title: site.title,
       description: site.description,
       url: site.url,
       image: site.image_url,
       type: "website",
       twitter_card: "summary_large_image"
-    })
+    }
   end
 end
