@@ -87,6 +87,9 @@ defmodule UnclickbaiterWeb do
       # Core UI components
       import UnclickbaiterWeb.CoreComponents
 
+      # App-level view helpers (Rails-style helpers equivalent)
+      import UnclickbaiterWeb.ViewHelpers
+
       # Common modules used in templates
       alias Phoenix.LiveView.JS
       alias UnclickbaiterWeb.Layouts

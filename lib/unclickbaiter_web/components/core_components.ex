@@ -511,6 +511,19 @@ defmodule UnclickbaiterWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Small presentational badge component
+
+  Usage: <.badge text="New" />
+  """
+  attr :text, :string, required: true
+
+  def badge(assigns) do
+    ~H"""
+    <span class="badge badge-sm">{@text}</span>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
