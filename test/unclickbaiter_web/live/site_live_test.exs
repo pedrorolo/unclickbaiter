@@ -97,37 +97,21 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
   describe "Show" do
     setup [:create_site]
 
-    test "displays site", %{conn: conn, site: site} do
+    test "displays site with og metadata", %{conn: conn, site: site} do
       {:ok, _show_live, html} = live(conn, ~p"/sites/#{site}")
 
-      assert html =~ "Show Site"
+      assert html =~ site.title
+      assert html =~ site.description
       assert html =~ site.url
+      assert html =~ ~s(property="og:title")
+      assert html =~ ~s(property="og:description")
     end
 
-    test "updates site and returns to show", %{conn: conn, site: site} do
+    test "shows redirect notice", %{conn: conn, site: site} do
       {:ok, show_live, _html} = live(conn, ~p"/sites/#{site}")
 
-      assert {:ok, form_live, _} =
-               show_live
-               |> element("a", "Edit")
-               |> render_click()
-               |> follow_redirect(conn, ~p"/sites/#{site}/edit?return_to=show")
-
-      assert render(form_live) =~ "Edit Site"
-
-      assert form_live
-             |> form("#site-form", site: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert {:ok, show_live, _html} =
-               form_live
-               |> form("#site-form", site: @update_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/sites/#{site}")
-
-      html = render(show_live)
-      assert html =~ "Site updated successfully"
-      assert html =~ "some updated url"
+      assert has_element?(show_live, "#redirect-notice")
+      assert render(show_live) =~ site.url
     end
   end
 end

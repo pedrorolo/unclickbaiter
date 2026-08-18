@@ -7,46 +7,40 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <.header>
-        Site {@site.id}
-        <:subtitle>This is a site record from your database.</:subtitle>
-        <:actions>
-          <.button navigate={~p"/sites"}>
-            <.icon name="hero-arrow-left" />
-          </.button>
-          <.button
-            variant="primary"
-            navigate={~p"/sites/#{@site}/edit?return_to=show"}
-          >
-            <.icon name="hero-pencil-square" /> Edit site
-          </.button>
-        </:actions>
-      </.header>
+      <p
+        id="redirect-notice"
+        phx-hook=".RedirectToSite"
+        phx-update="ignore"
+        data-url={@site.url}
+        class="mt-6"
+      >
+        The preview of the original site has been overwritten by unclickbaiter.
+      </p>
 
-      <.list>
-        <:item title="Url">{@site.url}</:item>
-        <:item title="Title">{@site.title}</:item>
-        <:item title="Description">{@site.description}</:item>
-      </.list>
-
-      <div class="mt-8 overflow-hidden rounded-2xl border border-zinc-200 shadow-sm">
-        <iframe
-          id="site-frame"
-          src={@site.url}
-          title={@site.title}
-          class="h-[70vh] w-full bg-white"
-          loading="lazy"
-        />
-      </div>
+      <p>
+        Redirecting to {URI.parse(@site.url).host || @site.url} in 3 seconds...
+      </p>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".RedirectToSite">
+        export default {
+          mounted() {
+            setTimeout(() => {
+              window.location.href = this.el.dataset.url
+            }, 3000)
+          }
+        }
+      </script>
     </Layouts.app>
     """
   end
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
+    site = Sites.get_site!(id)
+
     {:ok,
      socket
-     |> assign(:page_title, "Show Site")
-     |> assign(:site, Sites.get_site!(id))}
+     |> assign(:page_title, site.title)
+     |> assign(:page_description, site.description)
+     |> assign(:site, site)}
   end
 end
