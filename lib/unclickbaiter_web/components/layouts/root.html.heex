@@ -4,21 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.preview_metadata
-      title={assigns[:preview_metadata] && assigns[:preview_metadata].title}
-      description={
-        assigns[:preview_metadata] && assigns[:preview_metadata].description
-      }
-      url={assigns[:preview_metadata] && assigns[:preview_metadata].url}
-      image={assigns[:preview_metadata] && assigns[:preview_metadata].image}
-      site_name={
-        assigns[:preview_metadata] && assigns[:preview_metadata].site_name
-      }
-      type={assigns[:preview_metadata] && assigns[:preview_metadata].type}
-      twitter_card={
-        assigns[:preview_metadata] && assigns[:preview_metadata].twitter_card
-      }
-    />
+    <.preview_metadata preview_metadata={assigns[:preview_metadata]} />
     <.live_title default="Unclickbaiter" phx-no-format>{assigns[:page_title]}</.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script
