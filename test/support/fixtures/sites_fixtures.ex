@@ -13,7 +13,8 @@ defmodule Unclickbaiter.SitesFixtures do
       |> Enum.into(%{
         description: "some description",
         title: "some title",
-        url: "some url"
+        url: "some url",
+        image_url: "https://example.com/image.png"
       })
       |> Unclickbaiter.Sites.create_site()
 

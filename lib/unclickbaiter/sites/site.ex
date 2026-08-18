@@ -6,6 +6,7 @@ defmodule Unclickbaiter.Sites.Site do
     field :url, :string
     field :title, :string
     field :description, :string
+    field :image_url, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -13,7 +14,7 @@ defmodule Unclickbaiter.Sites.Site do
   @doc false
   def changeset(site, attrs) do
     site
-    |> cast(attrs, [:url, :title, :description])
+    |> cast(attrs, [:url, :title, :description, :image_url])
     |> validate_required([:url, :title, :description])
   end
 end
