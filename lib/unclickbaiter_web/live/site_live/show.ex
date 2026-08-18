@@ -51,7 +51,6 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     {:ok,
      socket
      |> assign(:site, site)
-     |> assign(:og, UnclickbaiterWeb.OpenGraph.from_site(site))}
+     |> assign(:og, UnclickbaiterWeb.PreviewMetadata.from_site(site))}
   end
-
 end
