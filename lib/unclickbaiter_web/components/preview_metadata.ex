@@ -14,7 +14,15 @@ defmodule UnclickbaiterWeb.PreviewMetadata do
   """
 
   @derive {Inspect, only: [:title, :description, :url, :image, :site_name]}
-  defstruct [:title, :description, :url, :image, :site_name, :type, :twitter_card]
+  defstruct [
+    :title,
+    :description,
+    :url,
+    :image,
+    :site_name,
+    :type,
+    :twitter_card
+  ]
 
   @type t :: %__MODULE__{
           title: String.t() | nil,

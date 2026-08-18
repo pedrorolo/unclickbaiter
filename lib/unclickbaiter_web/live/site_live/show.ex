@@ -51,6 +51,17 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     {:ok,
      socket
      |> assign(:site, site)
-     |> assign(:og, UnclickbaiterWeb.PreviewMetadata.from_site(site))}
+     |> assign(:og, site_to_og(site))}
+  end
+
+  defp site_to_og(site) do
+    UnclickbaiterWeb.PreviewMetadata.new(%{
+      title: site.title,
+      description: site.description,
+      url: site.url,
+      image: site.image_url,
+      type: "website",
+      twitter_card: "summary_large_image"
+    })
   end
 end
