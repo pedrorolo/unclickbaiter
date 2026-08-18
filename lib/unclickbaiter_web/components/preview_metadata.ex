@@ -56,19 +56,25 @@ defmodule UnclickbaiterWeb.PreviewMetadata do
     |> Enum.filter(fn {_k, v} -> not is_nil(v) and v != "" end)
   end
 
-  attr :preview_metadata, :map, default: nil
+  attr :title, :string, default: nil
+  attr :description, :string, default: nil
+  attr :url, :string, default: nil
+  attr :image, :string, default: nil
+  attr :site_name, :string, default: nil
+  attr :type, :string, default: "website"
+  attr :twitter_card, :string, default: "summary_large_image"
 
   def preview_metadata(assigns) do
-    assigns = assign_new(assigns, :preview_metadata, fn -> nil end)
-
-    attrs =
-      case assigns.preview_metadata do
-        %_{} = struct -> Map.from_struct(struct)
-        m when is_map(m) -> m
-        _ -> %{}
-      end
-
-    og = new(attrs)
+    og =
+      new(%{
+        title: assigns.title,
+        description: assigns.description,
+        url: assigns.url,
+        image: assigns.image,
+        site_name: assigns.site_name,
+        type: assigns.type,
+        twitter_card: assigns.twitter_card
+      })
 
     assigns = assign(assigns, :tags, to_meta_tags(og))
 
