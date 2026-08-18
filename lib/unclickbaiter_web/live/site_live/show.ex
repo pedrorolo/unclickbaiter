@@ -8,8 +8,12 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="max-w-3xl mx-auto mt-6 text-center">
-        <%= if @site.image_url do %>
-          <img src={@site.image_url} alt={@site.title} class="mx-auto mb-4 rounded shadow-sm w-full max-w-md object-cover" />
+        <%= if assigns[:page_image_url] do %>
+          <img
+            src={@page_image_url}
+            alt={@site.title}
+            class="mx-auto mb-4 rounded shadow-sm w-full max-w-md object-cover"
+          />
         <% end %>
 
         <p
