@@ -19,6 +19,7 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
         <.input field={@form[:url]} type="text" label="Url" />
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:description]} type="text" label="Description" />
+        <.input field={@form[:image_url]} type="text" label="Image URL" />
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Site</.button>
           <.button navigate={return_path(@return_to, @site)}>Cancel</.button>
