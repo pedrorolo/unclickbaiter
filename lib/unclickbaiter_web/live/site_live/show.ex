@@ -51,10 +51,17 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     {:ok,
      socket
      |> assign(:site, site)
+<<<<<<< Updated upstream
      |> assign(:preview_metadata, site_to_preview_metadata(site))}
   end
 
   defp site_to_preview_metadata(site) do
+=======
+     |> assign(:og, site_to_og(site))}
+  end
+
+  defp site_to_og(site) do
+>>>>>>> Stashed changes
     UnclickbaiterWeb.PreviewMetadata.new(%{
       title: site.title,
       description: site.description,
