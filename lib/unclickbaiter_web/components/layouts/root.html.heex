@@ -19,13 +19,13 @@
           "Unclickbaiting the web, one headline at a time."
       }
     />
-    <!-- Only include image meta tags when a page_image_url assign is present -->
-    <%= if assigns[:page_image_url] do %>
-      <meta property="og:image" content={@page_image_url} />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:image" content={@page_image_url} />
-    <% end %>
-    <meta property="og:type" content="website" />
+    <.meta_tags
+      page_title={assigns[:page_title]}
+      page_description={assigns[:page_description]}
+      page_image_url={assigns[:page_image_url]}
+      site={assigns[:site]}
+      page_url={assigns[:page_url]}
+    />
     <.live_title default="Unclickbaiter" phx-no-format>{assigns[:page_title]}</.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script
