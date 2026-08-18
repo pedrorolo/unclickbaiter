@@ -4,27 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <meta property="og:title" content={assigns[:page_title] || "Unclickbaiter"} />
-    <meta
-      property="og:description"
-      content={
-        assigns[:page_description] ||
-          "Unclickbaiting the web, one headline at a time."
+    <.preview_metadata
+      title={assigns[:preview_metadata] && assigns[:preview_metadata].title}
+      description={
+        assigns[:preview_metadata] && assigns[:preview_metadata].description
       }
-    />
-    <meta
-      property="og:description"
-      content={
-        assigns[:page_description] ||
-          "Unclickbaiting the web, one headline at a time."
+      url={assigns[:preview_metadata] && assigns[:preview_metadata].url}
+      image={assigns[:preview_metadata] && assigns[:preview_metadata].image}
+      site_name={
+        assigns[:preview_metadata] && assigns[:preview_metadata].site_name
       }
-    />
-    <.meta_tags
-      page_title={assigns[:page_title]}
-      page_description={assigns[:page_description]}
-      page_image_url={assigns[:page_image_url]}
-      site={assigns[:site]}
-      page_url={assigns[:page_url]}
+      type={assigns[:preview_metadata] && assigns[:preview_metadata].type}
+      twitter_card={
+        assigns[:preview_metadata] && assigns[:preview_metadata].twitter_card
+      }
     />
     <.live_title default="Unclickbaiter" phx-no-format>{assigns[:page_title]}</.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />

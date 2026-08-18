@@ -12,7 +12,14 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
       image_url: "https://example.com/img.png"
     }
 
-    og = PreviewMetadata.from_site(site, site_name: "ExampleSite")
+    og =
+      PreviewMetadata.new(%{
+        site_name: "ExampleSite",
+        title: site.title,
+        description: site.description,
+        url: site.url,
+        image: site.image_url
+      })
 
     assert %PreviewMetadata{} = og
     assert og.title == "Example"

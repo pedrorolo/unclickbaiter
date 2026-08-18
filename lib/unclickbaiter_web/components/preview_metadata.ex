@@ -1,17 +1,13 @@
 defmodule UnclickbaiterWeb.PreviewMetadata do
-  use Phoenix.Component
-
   @moduledoc """
-  Render OpenGraph and Twitter meta tags from assigns.
+  Function component to render preview OpenGraph/Twitter meta tags.
 
-  This module embeds a small OpenGraph struct and helpers directly so
-  there's no separate OpenGraph module.
-
-  Accepts either:
-    * :og - a %UnclickbaiterWeb.PreviewMetadata{} struct representing OG data
-    * :site - a %Unclickbaiter.Sites.Site{} struct (converted via from_site/2)
-    * page_title, page_description, page_image_url assigns (fallback)
+  Can accept individual fields as component attrs (title, description, url,
+  image, site_name, type, twitter_card) or be passed a struct via the
+  assigns in templates (assigns[:preview_metadata]).
   """
+
+  use Phoenix.Component
 
   @derive {Inspect, only: [:title, :description, :url, :image, :site_name]}
   defstruct [
@@ -39,53 +35,52 @@ defmodule UnclickbaiterWeb.PreviewMetadata do
   """
   @spec new(map() | keyword()) :: t()
   def new(attrs \\ %{}) do
-    struct(__MODULE__, attrs)
+    defaults = %{type: "website", twitter_card: "summary_large_image"}
+    struct(__MODULE__, Map.merge(defaults, Map.new(attrs)))
   end
 
-  @doc """
-  Build an OG struct from a Site struct.
-  """
-  @spec from_site(Unclickbaiter.Sites.Site.t(), keyword()) :: t()
-  def from_site(%Unclickbaiter.Sites.Site{} = site, opts \\ []) do
-    %__MODULE__{
-      title: site.title,
-      description: site.description,
-      url: site.url,
-      image: site.image_url,
-      site_name: Keyword.get(opts, :site_name),
-      type: Keyword.get(opts, :type, "website"),
-      twitter_card: Keyword.get(opts, :twitter_card, "summary_large_image")
-    }
-  end
-
-  @doc """
-  Convert an OG struct into a list of {name, content} tuples
-  suitable for rendering meta tags in templates. Filters out nil/empty values.
-  """
   @spec to_meta_tags(t()) :: [{String.t(), String.t()}]
-  def to_meta_tags(%__MODULE__{} = og) do
+  def to_meta_tags(%__MODULE__{} = preview_metadata) do
     [
-      {"og:type", og.type},
-      {"og:title", og.title},
-      {"og:description", og.description},
-      {"og:url", og.url},
-      {"og:site_name", og.site_name},
-      {"og:image", og.image},
-      {"twitter:card", og.twitter_card},
-      {"twitter:title", og.title},
-      {"twitter:description", og.description},
-      {"twitter:image", og.image}
+      {"og:type", preview_metadata.type},
+      {"og:title", preview_metadata.title},
+      {"og:description", preview_metadata.description},
+      {"og:url", preview_metadata.url},
+      {"og:site_name", preview_metadata.site_name},
+      {"og:image", preview_metadata.image},
+      {"twitter:card", preview_metadata.twitter_card},
+      {"twitter:title", preview_metadata.title},
+      {"twitter:description", preview_metadata.description},
+      {"twitter:image", preview_metadata.image}
     ]
     |> Enum.filter(fn {_k, v} -> not is_nil(v) and v != "" end)
   end
 
-  def meta_tags(assigns) do
-    og = build_og_from_assigns(assigns)
-    assigns = Map.put(assigns, :og, og)
+  attr :title, :string, default: nil
+  attr :description, :string, default: nil
+  attr :url, :string, default: nil
+  attr :image, :string, default: nil
+  attr :site_name, :string, default: nil
+  attr :type, :string, default: "website"
+  attr :twitter_card, :string, default: "summary_large_image"
+
+  def preview_metadata(assigns) do
+    og =
+      new(%{
+        title: assigns.title,
+        description: assigns.description,
+        url: assigns.url,
+        image: assigns.image,
+        site_name: assigns.site_name,
+        type: assigns.type,
+        twitter_card: assigns.twitter_card
+      })
+
+    assigns = assign(assigns, :tags, to_meta_tags(og))
 
     ~H"""
     <%!-- Render each meta tag, using property for og:* and name for others --%>
-    <%= for {name, content} <- to_meta_tags(@og) do %>
+    <%= for {name, content} <- @tags do %>
       <%= if String.starts_with?(name, "og:") do %>
         <meta property={name} content={content} />
       <% else %>
@@ -93,29 +88,5 @@ defmodule UnclickbaiterWeb.PreviewMetadata do
       <% end %>
     <% end %>
     """
-  end
-
-  defp build_og_from_assigns(assigns) do
-    cond do
-      assigns[:og] ->
-        assigns.og
-
-      assigns[:site] ->
-        from_site(assigns.site)
-
-      assigns[:page_title] || assigns[:page_description] ||
-          assigns[:page_image_url] ->
-        new(%{
-          title: assigns[:page_title],
-          description: assigns[:page_description],
-          url: assigns[:page_url] || nil,
-          image: assigns[:page_image_url] || nil,
-          type: "website",
-          twitter_card: "summary_large_image"
-        })
-
-      true ->
-        new()
-    end
   end
 end
