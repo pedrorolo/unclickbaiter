@@ -1,26 +1,18 @@
 defmodule Unclickbaiter.PreviewMetadata do
   @moduledoc """
-  Schema for the preview metadata of a site.
+  The PreviewMetadata context.
 
-  Holds the fields used to build the OpenGraph/Twitter preview metadata
-  for a site: title, description and image_url.
+  Provides the public API for fetching and building preview metadata
+  for sites.
   """
 
-  use Ecto.Schema
-  import Ecto.Changeset
+  alias Unclickbaiter.PreviewMetadata.HTTP
 
-  schema "preview_metadata" do
-    field :title, :string
-    field :description, :string
-    field :image_url, :string
+  @doc """
+  Fetches the preview metadata for the given `url`.
 
-    timestamps(type: :utc_datetime)
-  end
-
-  @doc false
-  def changeset(preview_metadata, attrs) do
-    preview_metadata
-    |> cast(attrs, [:title, :description, :image_url])
-    |> validate_required([:title, :description])
-  end
+  Returns `{:ok, %PreviewMetadata.PreviewMetadata{}}` or
+  `{:error, reason}` when the site cannot be fetched.
+  """
+  defdelegate fetch(url), to: HTTP
 end

@@ -6,7 +6,7 @@ defmodule Unclickbaiter.Sites do
   import Ecto.Query, warn: false
   alias Unclickbaiter.Repo
 
-  alias Unclickbaiter.PreviewMetadata
+  alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Sites.Site
 
   @doc """

@@ -1,6 +1,7 @@
 defmodule UnclickbaiterWeb.SiteLive.Form do
   use UnclickbaiterWeb, :live_view
 
+  alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Sites
   alias Unclickbaiter.Sites.Site
 
@@ -22,6 +23,13 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
           <.input field={pm[:description]} type="text" label="Description" />
           <.input field={pm[:image_url]} type="text" label="Image URL" />
         </.inputs_for>
+        <%= if has_original_preview_metadata?(@site) do %>
+          <.inputs_for :let={original_pm} field={@form[:original_preview_metadata]}>
+            <.input field={original_pm[:title]} type="hidden" />
+            <.input field={original_pm[:description]} type="hidden" />
+            <.input field={original_pm[:image_url]} type="hidden" />
+          </.inputs_for>
+        <% end %>
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Site</.button>
           <.button navigate={return_path(@return_to, @site)}>Cancel</.button>
@@ -98,4 +106,12 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
 
   defp return_path("index", _site), do: ~p"/sites"
   defp return_path("show", site), do: ~p"/sites/#{site}"
+
+  defp has_original_preview_metadata?(%{
+         original_preview_metadata: %PreviewMetadata{} = pm
+       }) do
+    not is_nil(pm.id)
+  end
+
+  defp has_original_preview_metadata?(_site), do: false
 end

@@ -113,11 +113,11 @@ defmodule Unclickbaiter.SitesTest do
       assert {:ok, %Site{}} = Sites.delete_site(site)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(Unclickbaiter.PreviewMetadata, pm.id)
+        Repo.get!(Unclickbaiter.PreviewMetadata.PreviewMetadata, pm.id)
       end
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(Unclickbaiter.PreviewMetadata, original_pm.id)
+        Repo.get!(Unclickbaiter.PreviewMetadata.PreviewMetadata, original_pm.id)
       end
     end
 
