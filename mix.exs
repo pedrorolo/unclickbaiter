@@ -76,7 +76,10 @@ defmodule Unclickbaiter.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:pre_commit, "~> 0.3.4", only: :dev}
+      {:pre_commit, "~> 0.3.4", only: :dev},
+      {:req, "~> 0.5"},
+      {:floki, "~> 0.36"},
+      {:fast_html, "~> 2.0"}
     ]
   end
 
