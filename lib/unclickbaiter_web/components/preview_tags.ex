@@ -1,4 +1,4 @@
-defmodule UnclickbaiterWeb.Components.PreviewMetadata do
+defmodule UnclickbaiterWeb.Components.PreviewTags do
   @moduledoc """
   Function component to render OpenGraph/Twitter meta tags.
 
@@ -15,7 +15,7 @@ defmodule UnclickbaiterWeb.Components.PreviewMetadata do
 
   attr :metadata, :map, default: nil
 
-  def preview_metadata(assigns) do
+  def preview_tags(assigns) do
     metadata = assigns.metadata || default_metadata()
     assigns = assign(assigns, :tags, to_meta_tags(metadata))
 

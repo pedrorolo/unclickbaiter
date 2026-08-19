@@ -11,7 +11,7 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
         <%= if assigns[:page_image_url] do %>
           <img
             src={@page_image_url}
-            alt={@site.title}
+            alt={@site.preview_metadata.title}
             class="mx-auto mb-4 rounded shadow-sm w-full max-w-md object-cover"
           />
         <% end %>
@@ -27,7 +27,8 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
         </p>
 
         <p class="mt-2">
-          Redirecting to {URI.parse(@site.url).host || @site.url} in 3 seconds...
+          Redirecting to {URI.parse(@site.url).host ||
+            @site.url} in 10 seconds...
         </p>
 
         <script :type={Phoenix.LiveView.ColocatedHook} name=".RedirectToSite">
@@ -55,11 +56,13 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
   end
 
   defp site_to_metadata(site) do
+    pm = site.preview_metadata
+
     %{
-      title: site.title,
-      description: site.description,
+      title: pm.title,
+      description: pm.description,
       url: site.url,
-      image: site.image_url,
+      image: pm.image_url,
       type: "website",
       twitter_card: "summary_large_image"
     }

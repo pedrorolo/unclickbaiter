@@ -8,7 +8,10 @@ defmodule Unclickbaiter.SitesTest do
 
     import Unclickbaiter.SitesFixtures
 
-    @invalid_attrs %{description: nil, title: nil, url: nil}
+    @invalid_attrs %{
+      url: nil,
+      preview_metadata: %{description: nil, title: nil}
+    }
 
     test "list_sites/0 returns all sites" do
       site = site_fixture()
@@ -22,15 +25,39 @@ defmodule Unclickbaiter.SitesTest do
 
     test "create_site/1 with valid data creates a site" do
       valid_attrs = %{
-        description: "some description",
-        title: "some title",
-        url: "some url"
+        url: "some url",
+        preview_metadata: %{
+          description: "some description",
+          title: "some title"
+        }
       }
 
       assert {:ok, %Site{} = site} = Sites.create_site(valid_attrs)
-      assert site.description == "some description"
-      assert site.title == "some title"
       assert site.url == "some url"
+      assert site.preview_metadata.description == "some description"
+      assert site.preview_metadata.title == "some title"
+    end
+
+    test "create_site/1 with original_preview_metadata stores both metadata records" do
+      attrs = %{
+        url: "some url",
+        preview_metadata: %{
+          description: "some description",
+          title: "some title"
+        },
+        original_preview_metadata: %{
+          description: "original description",
+          title: "original title",
+          image_url: "https://example.com/original.png"
+        }
+      }
+
+      assert {:ok, %Site{} = site} = Sites.create_site(attrs)
+      assert site.preview_metadata.title == "some title"
+      assert site.original_preview_metadata.title == "original title"
+
+      assert site.original_preview_metadata.image_url ==
+               "https://example.com/original.png"
     end
 
     test "create_site/1 with invalid data returns error changeset" do
@@ -41,15 +68,17 @@ defmodule Unclickbaiter.SitesTest do
       site = site_fixture()
 
       update_attrs = %{
-        description: "some updated description",
-        title: "some updated title",
-        url: "some updated url"
+        url: "some updated url",
+        preview_metadata: %{
+          description: "some updated description",
+          title: "some updated title"
+        }
       }
 
       assert {:ok, %Site{} = site} = Sites.update_site(site, update_attrs)
-      assert site.description == "some updated description"
-      assert site.title == "some updated title"
       assert site.url == "some updated url"
+      assert site.preview_metadata.description == "some updated description"
+      assert site.preview_metadata.title == "some updated title"
     end
 
     test "update_site/2 with invalid data returns error changeset" do
@@ -65,6 +94,31 @@ defmodule Unclickbaiter.SitesTest do
       site = site_fixture()
       assert {:ok, %Site{}} = Sites.delete_site(site)
       assert_raise Ecto.NoResultsError, fn -> Sites.get_site!(site.id) end
+    end
+
+    test "delete_site/1 deletes the preview metadata records" do
+      site = site_fixture()
+
+      {:ok, site} =
+        Sites.update_site(site, %{
+          original_preview_metadata: %{
+            title: "original title",
+            description: "original description"
+          }
+        })
+
+      pm = site.preview_metadata
+      original_pm = site.original_preview_metadata
+
+      assert {:ok, %Site{}} = Sites.delete_site(site)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(Unclickbaiter.PreviewMetadata, pm.id)
+      end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(Unclickbaiter.PreviewMetadata, original_pm.id)
+      end
     end
 
     test "change_site/1 returns a site changeset" do

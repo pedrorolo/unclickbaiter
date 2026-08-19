@@ -5,16 +5,20 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
   import Unclickbaiter.SitesFixtures
 
   @create_attrs %{
-    description: "some description",
-    title: "some title",
-    url: "some url"
+    url: "some url",
+    preview_metadata: %{
+      description: "some description",
+      title: "some title"
+    }
   }
   @update_attrs %{
-    description: "some updated description",
-    title: "some updated title",
-    url: "some updated url"
+    url: "some updated url",
+    preview_metadata: %{
+      description: "some updated description",
+      title: "some updated title"
+    }
   }
-  @invalid_attrs %{description: nil, title: nil, url: nil}
+  @invalid_attrs %{url: nil, preview_metadata: %{description: nil, title: nil}}
   defp create_site(_) do
     site = site_fixture()
 
@@ -100,8 +104,8 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     test "displays site with og metadata", %{conn: conn, site: site} do
       {:ok, _show_live, html} = live(conn, ~p"/sites/#{site}")
 
-      assert html =~ site.title
-      assert html =~ site.description
+      assert html =~ site.preview_metadata.title
+      assert html =~ site.preview_metadata.description
       assert html =~ site.url
       assert html =~ ~s(property="og:title")
       assert html =~ ~s(property="og:description")
