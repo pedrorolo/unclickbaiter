@@ -49,10 +49,17 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
 
     {:ok, _show_live, html} = live(conn, ~p"/sites/#{site}")
 
-    assert html =~ ~s(property="og:title" content="#{site.title}")
-    assert html =~ ~s(property="og:description" content="#{site.description}")
+    assert html =~
+             ~s(property="og:title" content="#{site.preview_metadata.title}")
+
+    assert html =~
+             ~s(property="og:description" content="#{site.preview_metadata.description}")
+
     assert html =~ ~s(property="og:url" content="#{site.url}")
-    assert html =~ ~s(property="og:image" content="#{site.image_url}")
+
+    assert html =~
+             ~s(property="og:image" content="#{site.preview_metadata.image_url}")
+
     assert html =~ ~s(name="twitter:card" content="#{@default_twitter_card}")
   end
 end

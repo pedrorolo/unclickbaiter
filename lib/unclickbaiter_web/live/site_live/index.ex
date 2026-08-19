@@ -22,8 +22,10 @@ defmodule UnclickbaiterWeb.SiteLive.Index do
         row_click={fn {_id, site} -> JS.navigate(~p"/sites/#{site}") end}
       >
         <:col :let={{_id, site}} label="Url">{site.url}</:col>
-        <:col :let={{_id, site}} label="Title">{site.title}</:col>
-        <:col :let={{_id, site}} label="Description">{site.description}</:col>
+        <:col :let={{_id, site}} label="Title">{site.preview_metadata.title}</:col>
+        <:col :let={{_id, site}} label="Description">
+          {site.preview_metadata.description}
+        </:col>
         <:action :let={{_id, site}}>
           <div class="sr-only">
             <.link navigate={~p"/sites/#{site}"}>Show</.link>

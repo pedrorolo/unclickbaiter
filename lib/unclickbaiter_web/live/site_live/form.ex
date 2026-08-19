@@ -17,9 +17,11 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
 
       <.form for={@form} id="site-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:url]} type="text" label="Url" />
-        <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:image_url]} type="text" label="Image URL" />
+        <.inputs_for :let={pm} field={@form[:preview_metadata]}>
+          <.input field={pm[:title]} type="text" label="Title" />
+          <.input field={pm[:description]} type="text" label="Description" />
+          <.input field={pm[:image_url]} type="text" label="Image URL" />
+        </.inputs_for>
         <footer>
           <.button phx-disable-with="Saving..." variant="primary">Save Site</.button>
           <.button navigate={return_path(@return_to, @site)}>Cancel</.button>

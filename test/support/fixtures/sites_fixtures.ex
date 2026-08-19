@@ -11,10 +11,12 @@ defmodule Unclickbaiter.SitesFixtures do
     {:ok, site} =
       attrs
       |> Enum.into(%{
-        description: "some description",
-        title: "some title",
         url: "some url",
-        image_url: "https://example.com/image.png"
+        preview_metadata: %{
+          description: "some description",
+          title: "some title",
+          image_url: "https://example.com/image.png"
+        }
       })
       |> Unclickbaiter.Sites.create_site()
 

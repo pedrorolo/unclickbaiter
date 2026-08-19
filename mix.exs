@@ -77,7 +77,6 @@ defmodule Unclickbaiter.MixProject do
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:pre_commit, "~> 0.3.4", only: :dev},
-      {:req, "~> 0.5"},
       {:floki, "~> 0.36"},
       {:fast_html, "~> 2.0"}
     ]

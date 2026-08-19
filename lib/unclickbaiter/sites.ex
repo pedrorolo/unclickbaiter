@@ -6,6 +6,7 @@ defmodule Unclickbaiter.Sites do
   import Ecto.Query, warn: false
   alias Unclickbaiter.Repo
 
+  alias Unclickbaiter.PreviewMetadata
   alias Unclickbaiter.Sites.Site
 
   @doc """
@@ -18,7 +19,9 @@ defmodule Unclickbaiter.Sites do
 
   """
   def list_sites do
-    Repo.all(Site)
+    Site
+    |> Repo.all()
+    |> Repo.preload([:preview_metadata, :original_preview_metadata])
   end
 
   @doc """
@@ -35,7 +38,10 @@ defmodule Unclickbaiter.Sites do
       ** (Ecto.NoResultsError)
 
   """
-  def get_site!(id), do: Repo.get!(Site, id)
+  def get_site!(id) do
+    Repo.get!(Site, id)
+    |> Repo.preload([:preview_metadata, :original_preview_metadata])
+  end
 
   @doc """
   Creates a site.
@@ -53,6 +59,7 @@ defmodule Unclickbaiter.Sites do
     %Site{}
     |> Site.changeset(attrs)
     |> Repo.insert()
+    |> preload_preview_metadata()
   end
 
   @doc """
@@ -71,6 +78,7 @@ defmodule Unclickbaiter.Sites do
     site
     |> Site.changeset(attrs)
     |> Repo.update()
+    |> preload_preview_metadata()
   end
 
   @doc """
@@ -86,8 +94,26 @@ defmodule Unclickbaiter.Sites do
 
   """
   def delete_site(%Site{} = site) do
-    Repo.delete(site)
+    Repo.transaction(fn ->
+      Repo.delete_all(
+        from(p in PreviewMetadata,
+          where:
+            p.id in [
+              ^site.preview_metadata_id,
+              ^site.original_preview_metadata_id
+            ]
+        )
+      )
+
+      Repo.delete!(site)
+    end)
   end
+
+  defp preload_preview_metadata({:ok, site}) do
+    {:ok, Repo.preload(site, [:preview_metadata, :original_preview_metadata])}
+  end
+
+  defp preload_preview_metadata({:error, changeset}), do: {:error, changeset}
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking site changes.
