@@ -11,6 +11,11 @@ defmodule UnclickbaiterWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  # Protect the whole site with HTTP Basic auth. Credentials are resolved
+  # at request time so they can be set via environment variables at runtime
+  # without recompiling.
+  plug :basic_auth
+
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
@@ -52,4 +57,15 @@ defmodule UnclickbaiterWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug UnclickbaiterWeb.Router
+
+  defp basic_auth(conn, _opts) do
+    if Application.get_env(:unclickbaiter, :env) == :prod do
+      Plug.BasicAuth.basic_auth(conn,
+        username: System.get_env("BASIC_AUTH_USERNAME", "admin"),
+        password: System.get_env("BASIC_AUTH_PASSWORD", "admin")
+      )
+    else
+      conn
+    end
+  end
 end
