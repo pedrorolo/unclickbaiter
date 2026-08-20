@@ -39,8 +39,14 @@ defmodule Unclickbaiter.Application do
   end
 
   defp read_secrets(:prod) do
-    EncryptedSecrets.read!(System.fetch_env!("MASTER_KEY"))
+    EncryptedSecrets.read!(System.fetch_env!("MASTER_KEY"), secrets_path())
   end
 
-  defp read_secrets(_env), do: EncryptedSecrets.read!()
+  defp read_secrets(_env) do
+    EncryptedSecrets.read!(File.read!(master_key_path()), secrets_path())
+  end
+
+  defp secrets_path, do: Path.join(priv_dir(), "secrets/secrets.yml.enc")
+  defp master_key_path, do: Path.join(priv_dir(), "secrets/master.key")
+  defp priv_dir, do: :code.priv_dir(:unclickbaiter)
 end
