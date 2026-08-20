@@ -5,7 +5,7 @@ defmodule Unclickbaiter.PreviewMetadata.HTTP.JsonLink do
   Used as a fallback by `Unclickbaiter.PreviewMetadata.HTTP` when fetching
   the site directly fails. The opengraph.io fallback for this module lives in
   `Unclickbaiter.PreviewMetadata.HTTP`. The API key is stored in the encrypted
-  secrets file (`config/secrets/secrets.yml.enc`) and read via the `:secrets`
+  secrets file (`priv/secrets/secrets.yml.enc`) and read via the `:secrets`
   application environment.
   """
 

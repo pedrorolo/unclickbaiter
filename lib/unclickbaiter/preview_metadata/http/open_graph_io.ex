@@ -5,7 +5,7 @@ defmodule Unclickbaiter.PreviewMetadata.HTTP.OpenGraphIO do
   Used as a fallback by `Unclickbaiter.PreviewMetadata.HTTP.JsonLink` when the
   jsonlink.io API fails. Requests use the API's residential and mobile proxies
   with JavaScript rendering enabled to circumvent bot protection. The API key
-  is stored in the encrypted secrets file (`config/secrets/secrets.yml.enc`)
+  is stored in the encrypted secrets file (`priv/secrets/secrets.yml.enc`)
   and read via the `:secrets` application environment.
   """
 
