@@ -8,7 +8,7 @@ defmodule Unclickbaiter.Application do
   @impl true
   def start(_type, _args) do
     env = Application.get_env(:unclickbaiter, :env)
-    secrets = EncryptedSecrets.read!()[env]
+    secrets = read_secrets(env)[env]
     Application.put_env(:unclickbaiter, :secrets, secrets)
 
     children = [
@@ -37,4 +37,10 @@ defmodule Unclickbaiter.Application do
     UnclickbaiterWeb.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  defp read_secrets(:prod) do
+    EncryptedSecrets.read!(System.fetch_env!("MASTER_KEY"))
+  end
+
+  defp read_secrets(_env), do: EncryptedSecrets.read!()
 end
