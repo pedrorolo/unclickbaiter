@@ -61,8 +61,10 @@ defmodule UnclickbaiterWeb.Endpoint do
   defp basic_auth(conn, _opts) do
     if Application.get_env(:unclickbaiter, :env) == :prod do
       Plug.BasicAuth.basic_auth(conn,
-        username: System.get_env("BASIC_AUTH_USERNAME", "admin"),
-        password: System.get_env("BASIC_AUTH_PASSWORD", "admin")
+        username:
+          Application.get_env(:unclickbaiter, :secrets)[:basic_auth][:user],
+        password:
+          Application.get_env(:unclickbaiter, :secrets)[:basic_auth][:pass]
       )
     else
       conn

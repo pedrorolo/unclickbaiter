@@ -8,10 +8,21 @@ defmodule UnclickbaiterWeb.Router do
     plug :put_root_layout, html: {UnclickbaiterWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :http_basic_auth
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  defp http_basic_auth(conn, _opts) do
+    case Application.get_env(:unclickbaiter, :secrets, %{})[:http_basic] do
+      %{user: user, pass: pass} ->
+        Plug.BasicAuth.basic_auth(conn, username: user, password: pass)
+
+      _ ->
+        conn
+    end
   end
 
   scope "/", UnclickbaiterWeb do
