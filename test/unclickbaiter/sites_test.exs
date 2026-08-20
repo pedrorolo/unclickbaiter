@@ -113,12 +113,54 @@ defmodule Unclickbaiter.SitesTest do
       assert {:ok, %Site{}} = Sites.delete_site(site)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(Unclickbaiter.PreviewMetadata, pm.id)
+        Repo.get!(Unclickbaiter.PreviewMetadata.PreviewMetadata, pm.id)
       end
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(Unclickbaiter.PreviewMetadata, original_pm.id)
+        Repo.get!(Unclickbaiter.PreviewMetadata.PreviewMetadata, original_pm.id)
       end
+    end
+
+    test "delete_site/1 keeps the original preview metadata when other sites reference it" do
+      {:ok, site} =
+        Sites.create_site(%{
+          url: "some url",
+          preview_metadata: %{title: "title", description: "desc"},
+          original_preview_metadata: %{
+            title: "original title",
+            description: "original desc"
+          }
+        })
+
+      original_pm = site.original_preview_metadata
+
+      {:ok, other_site} =
+        Sites.create_site(%{
+          url: "other url",
+          preview_metadata: %{title: "other title", description: "other desc"}
+        })
+
+      {:ok, other_site} =
+        other_site
+        |> Ecto.Changeset.change(original_preview_metadata_id: original_pm.id)
+        |> Repo.update()
+
+      assert {:ok, %Site{}} = Sites.delete_site(site)
+
+      assert Repo.get(
+               Unclickbaiter.PreviewMetadata.PreviewMetadata,
+               original_pm.id
+             )
+
+      assert Repo.get!(Site, other_site.id).original_preview_metadata_id ==
+               original_pm.id
+
+      assert {:ok, %Site{}} = Sites.delete_site(other_site)
+
+      refute Repo.get(
+               Unclickbaiter.PreviewMetadata.PreviewMetadata,
+               original_pm.id
+             )
     end
 
     test "change_site/1 returns a site changeset" do

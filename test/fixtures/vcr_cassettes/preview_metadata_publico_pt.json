@@ -1,0 +1,137 @@
+[
+  {
+    "request": {
+      "options": {
+        "httpc_options": {
+          "body_format": "binary"
+        },
+        "http_options": {
+          "timeout": "10000"
+        }
+      },
+      "body": "",
+      "url": "https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "",
+      "headers": {
+        "cache-control": "no-store, max-age=0",
+        "connection": "keep-alive",
+        "date": "Thu, 20 Aug 2026 11:16:30 GMT",
+        "via": "1.1 841b3d5fdc263e59f262c5d2dcd97abe.cloudfront.net (CloudFront)",
+        "server": "CloudFront",
+        "content-length": "0",
+        "content-type": "text/html; charset=UTF-8",
+        "x-amzn-waf-action": "challenge",
+        "access-control-allow-origin": "*",
+        "access-control-max-age": "86400",
+        "access-control-allow-methods": "OPTIONS,GET,POST",
+        "access-control-expose-headers": "x-amzn-waf-action",
+        "x-cache": "Error from cloudfront",
+        "x-amz-cf-pop": "LIS50-P2",
+        "x-amz-cf-id": "oic4Iqg-DpM4EbeASAaPSJ-d6sZwRRBxyG-KQ7PYMIzgohAGdHiGcw=="
+      },
+      "status_code": [
+        "HTTP/1.1",
+        202,
+        "Accepted"
+      ]
+    }
+  },
+  {
+    "request": {
+      "options": {
+        "httpc_options": {
+          "body_format": "binary"
+        },
+        "http_options": {
+          "timeout": "10000"
+        }
+      },
+      "body": "",
+      "url": "https://jsonlink.io/api/extract",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "{\"title\":\"\",\"description\":\"\",\"images\":[],\"sitename\":null,\"favicon\":\"\",\"duration\":76,\"domain\":\"www.publico.pt\",\"url\":\"https:\\/\\/www.publico.pt\\/2026\\/08\\/20\\/sociedade\\/noticia\\/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\"}",
+      "headers": {
+        "connection": "keep-alive",
+        "date": "Thu, 20 Aug 2026 11:16:30 GMT",
+        "server": "cloudflare",
+        "content-length": "246",
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-methods": "GET, POST, OPTIONS",
+        "access-control-allow-headers": "Content-Type",
+        "x-rate-limit-limit": "10",
+        "x-rate-limit-remaining": "7",
+        "x-rate-limit-reset": "1787224620",
+        "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=BXEr5Vq6aaaq1nMp3tPXmsfUT0p6BJijslPwVukFIi0t2gRhqz%2FnHFrfeU1hizdDZQuuobCaK9gwvndju8v6QMujBlOqK94xFr2TiVCbOBXjlbw1GTaFlrVl3otY6g%3D%3D\"}]}",
+        "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a2e0fc78eeb958fc-LIS",
+        "alt-svc": "h3=\":443\"; ma=86400"
+      },
+      "status_code": [
+        "HTTP/1.1",
+        200,
+        "OK"
+      ]
+    }
+  },
+  {
+    "request": {
+      "options": {
+        "httpc_options": {
+          "body_format": "binary"
+        },
+        "http_options": {
+          "timeout": "30000"
+        }
+      },
+      "body": "",
+      "url": "https://opengraph.io/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F08%2F20%2Fsociedade%2Fnoticia%2Fnomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "{\"hybridGraph\":{\"title\":\"Nomeação de médicos do INEM para serviços regionais considerada “ilegal”\",\"description\":\"Instituto defende que não estava obrigado a escolher os profissionais mais graduados, como exige o regime das carreiras médicas. Diz que esse é apenas “um critério preferencial e não obrigatório”.\",\"type\":\"article\",\"image\":\"https://imagens.publico.pt/imagens.aspx/2110709?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\",\"url\":\"https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\",\"favicon\":\"https://static.publico.pt/files/site/assets/img/ico/favicon-32x32.png\",\"site_name\":\"PÚBLICO\"},\"openGraph\":{\"title\":\"Nomeação de médicos do INEM para serviços regionais considerada “ilegal”\",\"description\":\"Instituto defende que não estava obrigado a escolher os profissionais mais graduados, como exige o regime das carreiras médicas. Diz que esse é apenas “um critério preferencial e não obrigatório”.\",\"type\":\"article\",\"image\":{\"url\":\"https://imagens.publico.pt/imagens.aspx/2110709?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\"},\"url\":\"https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\",\"site_name\":\"PÚBLICO\"},\"htmlInferred\":{\"title\":\"Nomeação de médicos do INEM para serviços regionais considerada “ilegal”\",\"description\":\"Instituto defende que não estava obrigado a escolher os profissionais mais graduados, como exige o regime das carreiras médicas. Diz que esse é apenas “um critério preferencial e não obrigatório”.\",\"type\":\"site\",\"image\":\"https://imagens.publico.pt/imagens.aspx/2110709?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\",\"url\":\"https://www.publico.pt\",\"favicon\":\"https://static.publico.pt/files/site/assets/img/ico/favicon-32x32.png\",\"site_name\":\"Nomeação de médicos do INEM para serviços regionais considerada “ilegal”\",\"images\":[\"https://static.publico.pt/s3/files/mypublico/wrapper.png\",\"https://imagens.publico.pt/imagens.aspx/2110709?tp=UH&db=IMAGENS&type=JPG&w=320&act=resize\",\"https://static.publico.pt/img/livro-reclamacoes.png\",\"https://static.publico.pt/img/e-goi-logo.png\"]},\"requestInfo\":{\"redirects\":0,\"host\":\"https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\",\"responseCode\":200,\"cache_ok\":false,\"max_cache_age\":432000000,\"accept_lang\":\"en-US,en;q=0.9\",\"ai_sanitize\":false,\"originalUrl\":\"/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F08%2F20%2Fsociedade%2Fnoticia%2Fnomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525?app_id=REDACTED&cache_ok=false&retry=true&auto_proxy=true&auto_render=true&use_premium=true&use_superior=true&full_render=true\",\"url\":\"https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\",\"full_render\":true,\"wait_for_selector\":null,\"scroll_to_bottom\":false,\"use_ai\":false,\"requests_limit\":\"5\",\"proxy_limit\":\"1\",\"request_increase\":\"true\",\"api_request_count_full_render\":\"10\",\"isFreeTier\":false,\"ai_sanitize_mode\":\"sanitize\",\"has_ai_sanitize\":true,\"has_ai_sanitize_classifier\":true,\"_apiVersion\":\"3.0\",\"use_proxy\":false,\"use_premium\":true,\"use_superior\":true,\"auto_proxy\":true,\"api_request_count_proxy\":\"10\",\"api_request_count_premium\":\"20\",\"api_request_count_superior\":\"30\",\"has_auto_proxy_feature\":\"true\",\"has_ai_feature\":\"true\",\"retry\":true,\"max_retries\":4,\"retry_escalate\":true,\"auto_render\":true,\"requestCount\":60,\"responseLength\":\"640715\",\"responseContentType\":\"application/json\"},\"accept_lang\":\"en-US,en;q=0.9\",\"is_cache\":false,\"url\":\"https://www.publico.pt/2026/08/20/sociedade/noticia/nomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525\",\"originalUrl\":\"/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F08%2F20%2Fsociedade%2Fnoticia%2Fnomeacao-medicos-inem-servicos-regionais-considerada-ilegal-2185525?app_id=REDACTED&cache_ok=false&retry=true&auto_proxy=true&auto_render=true&use_premium=true&use_superior=true&full_render=true\"}",
+      "headers": {
+        "cache-control": "no-store",
+        "date": "Thu, 20 Aug 2026 11:16:35 GMT",
+        "etag": "W/\"1054-D+LZzkPSQLxOJZgJiNJJwdb4N/E\"",
+        "vary": "Origin",
+        "content-length": "4180",
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Billing-Requests",
+        "x-billing-requests": "60"
+      },
+      "status_code": [
+        "HTTP/1.1",
+        200,
+        "OK"
+      ]
+    }
+  }
+]

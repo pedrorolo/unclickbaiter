@@ -36,7 +36,7 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
             mounted() {
               setTimeout(() => {
                 window.location.href = this.el.dataset.url
-              }, 10000)
+              }, 0)
             }
           }
         </script>

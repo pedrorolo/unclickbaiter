@@ -1,0 +1,50 @@
+[
+  {
+    "request": {
+      "options": {
+        "httpc_options": {
+          "body_format": "binary"
+        },
+        "http_options": {
+          "timeout": "10000"
+        }
+      },
+      "body": "",
+      "url": "https://jsonlink.io/api/extract",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "{\"title\":\"The Tech That Will Invade Our Lives in 2026\",\"description\":\"From talking computers to self-driving cars, here are the trends to watch.\",\"images\":[\"https:\\/\\/static01.nyt.com\\/images\\/2026\\/01\\/08\\/business\\/07techfix\\/07techfix-facebookJumbo.jpg\"],\"url\":\"https:\\/\\/www.nytimes.com\\/2026\\/01\\/08\\/technology\\/personaltech\\/2026-tech-trends.html\",\"sitename\":\"The Tech That Will Invade Our Lives in 2026\",\"favicon\":\"https:\\/\\/www.nytimes.com\\/favicon.ico\",\"duration\":800,\"domain\":\"www.nytimes.com\"}",
+      "headers": {
+        "connection": "keep-alive",
+        "date": "Thu, 20 Aug 2026 11:16:27 GMT",
+        "server": "cloudflare",
+        "content-length": "505",
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-methods": "GET, POST, OPTIONS",
+        "access-control-allow-headers": "Content-Type",
+        "x-rate-limit-limit": "10",
+        "x-rate-limit-remaining": "8",
+        "x-rate-limit-reset": "1787224620",
+        "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=EwQSw8UQqm0sozqzCgc%2FUc1HQ4EmJ%2BDi8LNDeGKXbe00reKGWuoMCO%2Btu6NGVOt8cIZjG4iSeZgNuG6L5mcLbwpy1Gm0Q%2Bvep9VPQOdLAnJNhO5aJ580wHLS8ni2WA%3D%3D\"}]}",
+        "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a2e0fc643d0b58fc-LIS",
+        "alt-svc": "h3=\":443\"; ma=86400"
+      },
+      "status_code": [
+        "HTTP/1.1",
+        200,
+        "OK"
+      ]
+    }
+  }
+]

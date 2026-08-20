@@ -2,7 +2,7 @@ defmodule Unclickbaiter.Sites.Site do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Unclickbaiter.PreviewMetadata
+  alias Unclickbaiter.PreviewMetadata.PreviewMetadata
 
   schema "sites" do
     field :url, :string

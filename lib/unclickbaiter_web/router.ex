@@ -10,19 +10,39 @@ defmodule UnclickbaiterWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :browser_auth do
+    plug :browser
+    plug :http_basic_auth
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  defp http_basic_auth(conn, _opts) do
+    case Application.get_env(:unclickbaiter, :secrets, %{})[:http_basic] do
+      %{user: user, pass: pass} ->
+        Plug.BasicAuth.basic_auth(conn, username: user, password: pass)
+
+      _ ->
+        conn
+    end
+  end
+
   scope "/", UnclickbaiterWeb do
-    pipe_through :browser
+    pipe_through :browser_auth
 
     get "/", PageController, :home
 
     live "/sites", SiteLive.Index, :index
     live "/sites/new", SiteLive.Form, :new
-    live "/sites/:id", SiteLive.Show, :show
     live "/sites/:id/edit", SiteLive.Form, :edit
+  end
+
+  scope "/", UnclickbaiterWeb do
+    pipe_through :browser
+
+    live "/sites/:id", SiteLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
