@@ -2,7 +2,15 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
   use UnclickbaiterWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Req.Test
   import Unclickbaiter.SitesFixtures
+
+  alias Unclickbaiter.PreviewMetadata.HTTP.ProviderCache
+
+  setup do
+    ProviderCache.clear()
+    :ok
+  end
 
   @create_attrs %{
     url: "some url",
@@ -116,6 +124,219 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
 
       assert has_element?(show_live, "#redirect-notice")
       assert render(show_live) =~ site.url
+    end
+  end
+
+  describe "Form metadata fetching" do
+    defp allow_metadata_mock(lv) do
+      Req.Test.allow(Unclickbaiter.PreviewMetadata.HTTP, self(), lv.pid)
+    end
+
+    defp wait_until_fetched(lv, timeout \\ 2000) do
+      deadline = System.monotonic_time(:millisecond) + timeout
+
+      html =
+        Enum.reduce_while(1..100, nil, fn _, _ ->
+          html = render(lv)
+
+          if html =~ "Fetching preview metadata" and
+               System.monotonic_time(:millisecond) < deadline do
+            Process.sleep(20)
+            {:cont, nil}
+          else
+            {:halt, html}
+          end
+        end)
+
+      html
+    end
+
+    test "fetches and fills preview metadata fields when the url changes",
+         %{conn: conn} do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, fn conn ->
+        html(conn, """
+        <html>
+          <head>
+            <meta property="og:title" content="Fetched Title" />
+            <meta property="og:description" content="Fetched description" />
+            <meta property="og:image" content="https://cdn.example.com/img.png" />
+          </head>
+        </html>
+        """)
+      end)
+
+      {:ok, form_live, _html} = live(conn, ~p"/sites/new")
+      allow_metadata_mock(form_live)
+
+      form_live
+      |> form("#site-form", site: %{url: "https://example.com"})
+      |> render_change()
+
+      html = wait_until_fetched(form_live)
+      refute html =~ "Fetching preview metadata"
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[preview_metadata][title]']"
+               )
+             ) =~
+               ~s(value="Fetched Title")
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[preview_metadata][description]']"
+               )
+             ) =~
+               ~s(value="Fetched description")
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[preview_metadata][image_url]']"
+               )
+             ) =~
+               ~s(value="https://cdn.example.com/img.png")
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[original_preview_metadata][title]']"
+               )
+             ) =~
+               ~s(value="Fetched Title")
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[original_preview_metadata][description]']"
+               )
+             ) =~
+               ~s(value="Fetched description")
+
+      assert render(
+               element(
+                 form_live,
+                 "#site-form input[name='site[original_preview_metadata][image_url]']"
+               )
+             ) =~
+               ~s(value="https://cdn.example.com/img.png")
+    end
+
+    test "shows the fetched metadata in the preview card", %{conn: conn} do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, fn conn ->
+        html(conn, """
+        <html>
+          <head>
+            <meta property="og:title" content="Fetched Title" />
+            <meta property="og:description" content="Fetched description" />
+            <meta property="og:image" content="https://cdn.example.com/img.png" />
+          </head>
+        </html>
+        """)
+      end)
+
+      {:ok, form_live, _html} = live(conn, ~p"/sites/new")
+      allow_metadata_mock(form_live)
+
+      form_live
+      |> form("#site-form", site: %{url: "https://example.com"})
+      |> render_change()
+
+      html = wait_until_fetched(form_live)
+      refute html =~ "Fetching preview metadata"
+
+      assert render(form_live) =~ ~s(src="https://cdn.example.com/img.png")
+      assert render(element(form_live, "#preview-card")) =~ "Fetched Title"
+
+      assert render(element(form_live, "#preview-card")) =~
+               "Fetched description"
+    end
+
+    test "does not fetch metadata for invalid urls", %{conn: conn} do
+      {:ok, form_live, _html} = live(conn, ~p"/sites/new")
+
+      form_live
+      |> form("#site-form", site: %{url: "some url"})
+      |> render_change()
+
+      html = render(form_live)
+      refute html =~ "Fetching preview metadata"
+      refute html =~ "original_preview_metadata"
+    end
+
+    test "keeps the form usable when the metadata fetch fails", %{conn: conn} do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" -> Plug.Conn.send_resp(conn, 404, "nope")
+          "jsonlink.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+          "opengraph.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+        end
+      end)
+
+      {:ok, form_live, _html} = live(conn, ~p"/sites/new")
+      allow_metadata_mock(form_live)
+
+      form_live
+      |> form("#site-form", site: %{url: "https://example.com"})
+      |> render_change()
+
+      html = wait_until_fetched(form_live)
+      refute html =~ "Fetching preview metadata"
+
+      assert has_element?(form_live, "#metadata-fetch-error")
+
+      assert render(element(form_live, "#metadata-fetch-error")) =~
+               "We couldn&#39;t fetch the preview metadata for this site"
+
+      assert render(element(form_live, "#site-form input[name='site[url]']")) =~
+               ~s(value="https://example.com")
+    end
+
+    test "shows a live preview of the preview metadata under the form", %{
+      conn: conn
+    } do
+      {:ok, form_live, _html} = live(conn, ~p"/sites/new")
+
+      assert has_element?(form_live, "#preview-card")
+
+      form_live
+      |> form("#site-form",
+        site: %{
+          url: "https://example.com",
+          preview_metadata: %{
+            title: "Preview Title",
+            description: "Preview description",
+            image_url: "https://cdn.example.com/img.png"
+          }
+        }
+      )
+      |> render_change()
+
+      html = wait_until_fetched(form_live)
+      assert html =~ "Preview Title"
+      assert html =~ "Preview description"
+      assert html =~ ~s(src="https://cdn.example.com/img.png")
+    end
+
+    test "edit page shows saved metadata in the preview card", %{conn: conn} do
+      site =
+        site_fixture(%{
+          url: "https://example.com",
+          preview_metadata: %{
+            title: "Saved Title",
+            description: "Saved description",
+            image_url: "https://cdn.example.com/saved.png"
+          }
+        })
+
+      {:ok, form_live, _html} = live(conn, ~p"/sites/#{site}/edit")
+
+      card = render(element(form_live, "#preview-card"))
+      assert card =~ "Saved Title"
+      assert card =~ "Saved description"
+      assert card =~ ~s(src="https://cdn.example.com/saved.png")
     end
   end
 end

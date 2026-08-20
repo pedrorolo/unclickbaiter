@@ -7,12 +7,17 @@ defmodule Unclickbaiter.Application do
 
   @impl true
   def start(_type, _args) do
+    env = Application.get_env(:unclickbaiter, :env)
+    secrets = EncryptedSecrets.read!()[env]
+    Application.put_env(:unclickbaiter, :secrets, secrets)
+
     children = [
       UnclickbaiterWeb.Telemetry,
       Unclickbaiter.Repo,
       {DNSCluster,
        query: Application.get_env(:unclickbaiter, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Unclickbaiter.PubSub},
+      Unclickbaiter.PreviewMetadata.HTTP.ProviderCache,
       # Start a worker by calling: Unclickbaiter.Worker.start_link(arg)
       # {Unclickbaiter.Worker, arg},
       # Start to serve requests, typically the last entry

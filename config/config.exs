@@ -10,7 +10,8 @@ import Config
 config :unclickbaiter,
   env: config_env(),
   ecto_repos: [Unclickbaiter.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  env: config_env()
 
 # Configure the endpoint
 config :unclickbaiter, UnclickbaiterWeb.Endpoint,

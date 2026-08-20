@@ -1,10 +1,16 @@
 defmodule Unclickbaiter.PreviewMetadata.HTTPTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Req.Test
 
   alias Unclickbaiter.PreviewMetadata.HTTP
+  alias Unclickbaiter.PreviewMetadata.HTTP.ProviderCache
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
+
+  setup do
+    ProviderCache.clear()
+    :ok
+  end
 
   describe "fetch/1" do
     test "extracts og metadata from the html" do
@@ -98,25 +104,115 @@ defmodule Unclickbaiter.PreviewMetadata.HTTPTest do
     end
 
     test "returns error on non-2xx status" do
-      expect(Unclickbaiter.PreviewMetadata.HTTP, fn conn ->
-        Plug.Conn.send_resp(conn, 404, "nope")
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" -> Plug.Conn.send_resp(conn, 404, "nope")
+          "jsonlink.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+          "opengraph.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+        end
       end)
 
-      assert {:error, {:http_error, 404}} =
+      assert {:error, {:http_error, 500}} =
                HTTP.fetch("https://example.com")
     end
 
     test "returns error on transport errors" do
-      expect(Unclickbaiter.PreviewMetadata.HTTP, fn conn ->
-        transport_error(conn, :nxdomain)
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" -> transport_error(conn, :nxdomain)
+          "jsonlink.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+          "opengraph.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+        end
       end)
 
-      assert {:error, %Req.TransportError{reason: :nxdomain}} =
+      assert {:error, {:http_error, 500}} =
                HTTP.fetch("https://example.com")
     end
 
     test "returns error for invalid urls" do
       assert {:error, :invalid_url} = HTTP.fetch(nil)
+    end
+
+    test "returns error when the body cannot be parsed" do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" -> Req.Test.json(conn, %{"title" => "json"})
+          "jsonlink.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+          "opengraph.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+        end
+      end)
+
+      assert {:error, {:http_error, 500}} = HTTP.fetch("https://example.com")
+    end
+
+    test "falls back to jsonlink.io when the site request fails" do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 2, fn conn ->
+        case conn.host do
+          "example.com" ->
+            Plug.Conn.send_resp(conn, 404, "nope")
+
+          "jsonlink.io" ->
+            Req.Test.json(conn, %{
+              "title" => "JL Title",
+              "description" => "JL desc",
+              "image" => "https://cdn.example.com/jl.png"
+            })
+        end
+      end)
+
+      assert {:ok,
+              %PreviewMetadata{
+                title: "JL Title",
+                description: "JL desc",
+                image_url: "https://cdn.example.com/jl.png"
+              }} = HTTP.fetch("https://example.com")
+    end
+
+    test "falls back to jsonlink.io when the site body cannot be parsed" do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 2, fn conn ->
+        case conn.host do
+          "example.com" -> Req.Test.json(conn, %{"title" => "json"})
+          "jsonlink.io" -> Req.Test.json(conn, %{"title" => "JL Title"})
+        end
+      end)
+
+      assert {:ok, %PreviewMetadata{title: "JL Title"}} =
+               HTTP.fetch("https://example.com")
+    end
+
+    test "falls back to opengraph.io when jsonlink.io returns empty metadata" do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" ->
+            Plug.Conn.send_resp(conn, 404, "nope")
+
+          "jsonlink.io" ->
+            Req.Test.json(conn, %{"title" => "", "description" => ""})
+
+          "opengraph.io" ->
+            Req.Test.json(conn, %{
+              "hybridGraph" => %{
+                "title" => "OG Title",
+                "description" => "OG desc"
+              }
+            })
+        end
+      end)
+
+      assert {:ok, %PreviewMetadata{title: "OG Title", description: "OG desc"}} =
+               HTTP.fetch("https://example.com")
+    end
+
+    test "returns error when the jsonlink.io fallback also fails" do
+      expect(Unclickbaiter.PreviewMetadata.HTTP, 3, fn conn ->
+        case conn.host do
+          "example.com" -> Plug.Conn.send_resp(conn, 404, "nope")
+          "jsonlink.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+          "opengraph.io" -> Plug.Conn.send_resp(conn, 500, "nope")
+        end
+      end)
+
+      assert {:error, {:http_error, 500}} = HTTP.fetch("https://example.com")
     end
   end
 end

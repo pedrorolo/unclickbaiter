@@ -1,6 +1,7 @@
 defmodule UnclickbaiterWeb.SiteLive.Form do
   use UnclickbaiterWeb, :live_view
 
+  alias Unclickbaiter.PreviewMetadata.HTTP
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Sites
   alias Unclickbaiter.Sites.Site
@@ -18,12 +19,28 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
 
       <.form for={@form} id="site-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:url]} type="text" label="Url" />
+        <%= if @metadata_fetching do %>
+          <p class="mt-1 text-sm text-slate-500">Fetching preview metadata…</p>
+        <% end %>
+        <%= if @metadata_fetch_failed do %>
+          <div
+            id="metadata-fetch-error"
+            class="mt-2 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300"
+          >
+            <.icon name="hero-exclamation-triangle" class="mt-0.5 size-4 shrink-0" />
+            <p>
+              We couldn't fetch the preview metadata for this site. Please fill in the
+              fields manually.
+            </p>
+          </div>
+        <% end %>
         <.inputs_for :let={pm} field={@form[:preview_metadata]}>
           <.input field={pm[:title]} type="text" label="Title" />
           <.input field={pm[:description]} type="text" label="Description" />
           <.input field={pm[:image_url]} type="text" label="Image URL" />
         </.inputs_for>
-        <%= if has_original_preview_metadata?(@site) do %>
+        <%= if has_original_preview_metadata?(@site) ||
+                Map.has_key?(@form.params, "original_preview_metadata") do %>
           <.inputs_for :let={original_pm} field={@form[:original_preview_metadata]}>
             <.input field={original_pm[:title]} type="hidden" />
             <.input field={original_pm[:description]} type="hidden" />
@@ -35,6 +52,52 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
           <.button navigate={return_path(@return_to, @site)}>Cancel</.button>
         </footer>
       </.form>
+
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold leading-8">Preview</h2>
+        <div
+          id="preview-card"
+          class="card mt-2 overflow-hidden border border-base-300 bg-base-100"
+        >
+          <%= if @metadata_fetching do %>
+            <div class="flex h-40 w-full items-center justify-center bg-base-200">
+              <.icon
+                name="hero-arrow-path"
+                class="size-10 animate-spin text-base-content/30"
+              />
+            </div>
+            <div class="space-y-2 p-4">
+              <div class="h-4 w-1/2 animate-pulse rounded bg-base-200"></div>
+              <div class="h-3 w-3/4 animate-pulse rounded bg-base-200"></div>
+              <div class="h-3 w-2/3 animate-pulse rounded bg-base-200"></div>
+            </div>
+          <% else %>
+            <%= if preview_image_url(@form) do %>
+              <div class="bg-base-200">
+                <img
+                  src={preview_image_url(@form)}
+                  alt="Preview image"
+                  class="mx-auto max-h-72 w-full object-contain"
+                  onerror="this.remove()"
+                />
+              </div>
+            <% else %>
+              <div class="flex h-40 w-full items-center justify-center bg-base-200">
+                <.icon name="hero-photo" class="size-10 text-base-content/30" />
+              </div>
+            <% end %>
+            <div class="p-4">
+              <p class="text-sm text-muted">{preview_url(@form) || "—"}</p>
+              <h3 class="mt-1 text-xl font-semibold leading-snug">
+                {preview_value(@form, :title) || "Title"}
+              </h3>
+              <p class="mt-1 text-sm text-base-content/70">
+                {preview_value(@form, :description) || "Description"}
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </Layouts.app>
     """
   end
@@ -44,6 +107,11 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
     {:ok,
      socket
      |> assign(:return_to, return_to(params["return_to"]))
+     |> assign(:site_params, %{})
+     |> assign(:fetched_url, nil)
+     |> assign(:metadata_fetch_ref, nil)
+     |> assign(:metadata_fetching, false)
+     |> assign(:metadata_fetch_failed, false)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -56,6 +124,7 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
     socket
     |> assign(:page_title, "Edit Site")
     |> assign(:site, site)
+    |> assign(:fetched_url, site.url)
     |> assign(:form, to_form(Sites.change_site(site)))
   end
 
@@ -71,11 +140,84 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
   @impl true
   def handle_event("validate", %{"site" => site_params}, socket) do
     changeset = Sites.change_site(socket.assigns.site, site_params)
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+
+    socket =
+      assign(socket,
+        site_params: site_params,
+        form: to_form(changeset, action: :validate)
+      )
+
+    {:noreply, fetch_preview_metadata(socket, site_params)}
   end
 
   def handle_event("save", %{"site" => site_params}, socket) do
     save_site(socket, socket.assigns.live_action, site_params)
+  end
+
+  @impl true
+  def handle_info({:preview_metadata_fetched, ref, result}, socket) do
+    if ref != socket.assigns.metadata_fetch_ref do
+      {:noreply, socket}
+    else
+      {:noreply, apply_fetched_metadata(socket, result)}
+    end
+  end
+
+  defp fetch_preview_metadata(socket, %{"url" => url}) when is_binary(url) do
+    if HTTP.fetchable_url?(url) and url != socket.assigns.fetched_url do
+      ref = make_ref()
+      pid = self()
+
+      Task.start(fn ->
+        send(
+          pid,
+          {:preview_metadata_fetched, ref,
+           Unclickbaiter.PreviewMetadata.fetch(url)}
+        )
+      end)
+
+      socket
+      |> assign(:metadata_fetch_ref, ref)
+      |> assign(:metadata_fetching, true)
+      |> assign(:metadata_fetch_failed, false)
+    else
+      socket
+    end
+  end
+
+  defp fetch_preview_metadata(socket, _site_params), do: socket
+
+  defp apply_fetched_metadata(socket, {:ok, pm}) do
+    site_params =
+      socket.assigns.site_params
+      |> merge_metadata(pm)
+
+    changeset = Sites.change_site(socket.assigns.site, site_params)
+
+    socket
+    |> assign(:site_params, site_params)
+    |> assign(:fetched_url, site_params["url"])
+    |> assign(:metadata_fetching, false)
+    |> assign(:metadata_fetch_failed, false)
+    |> assign(:form, to_form(changeset))
+  end
+
+  defp apply_fetched_metadata(socket, {:error, _reason}) do
+    socket
+    |> assign(:metadata_fetching, false)
+    |> assign(:metadata_fetch_failed, true)
+  end
+
+  defp merge_metadata(site_params, pm) do
+    fields = %{
+      "title" => pm.title,
+      "description" => pm.description,
+      "image_url" => pm.image_url
+    }
+
+    site_params
+    |> Map.update("preview_metadata", fields, &Map.merge(&1, fields))
+    |> Map.update("original_preview_metadata", fields, &Map.merge(&1, fields))
   end
 
   defp save_site(socket, :edit, site_params) do
@@ -114,4 +256,35 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
   end
 
   defp has_original_preview_metadata?(_site), do: false
+
+  defp preview_value(form, field) do
+    case form[:preview_metadata] do
+      %Phoenix.HTML.FormField{value: %Ecto.Changeset{} = cs} ->
+        Map.get(cs.changes, field) || Map.get(cs.data || %{}, field)
+
+      %Phoenix.HTML.FormField{value: value} when is_struct(value) ->
+        Map.get(value, field)
+
+      %Phoenix.HTML.Form{} = pm_form ->
+        pm_form[field].value
+
+      _ ->
+        nil
+    end
+  end
+
+  defp preview_image_url(form) do
+    case preview_value(form, :image_url) do
+      url when is_binary(url) and url != "" -> url
+      _ -> nil
+    end
+  end
+
+  defp preview_url(form) do
+    case form[:url] do
+      %Phoenix.HTML.FormField{value: value} -> value
+      %Phoenix.HTML.Form{} -> form[:url].value
+      _ -> nil
+    end
+  end
 end

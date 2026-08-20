@@ -96,17 +96,42 @@ defmodule Unclickbaiter.Sites do
   def delete_site(%Site{} = site) do
     Repo.transaction(fn ->
       Repo.delete_all(
-        from(p in PreviewMetadata,
-          where:
-            p.id in [
-              ^site.preview_metadata_id,
-              ^site.original_preview_metadata_id
-            ]
-        )
+        from(p in PreviewMetadata, where: p.id == ^site.preview_metadata_id)
       )
 
       Repo.delete!(site)
+
+      Unclickbaiter.PreviewMetadata.delete_original_preview_metadata_if_unreferenced(
+        site.original_preview_metadata_id
+      )
     end)
+
+    {:ok, site}
+  end
+
+  @doc """
+  Returns the original preview metadata of a site with the given `url`, if any.
+
+  Returns `{:ok, %PreviewMetadata{}}` or `:error`.
+
+  ## Examples
+
+      iex> get_original_preview_metadata("some url")
+      :error
+
+  """
+  def get_original_preview_metadata(url) do
+    query =
+      from(s in Site,
+        where: s.url == ^url and not is_nil(s.original_preview_metadata_id),
+        order_by: [asc: s.id],
+        preload: [:original_preview_metadata]
+      )
+
+    case query |> limit(1) |> Repo.one() do
+      %Site{original_preview_metadata: %PreviewMetadata{} = pm} -> {:ok, pm}
+      _ -> :error
+    end
   end
 
   defp preload_preview_metadata({:ok, site}) do

@@ -69,6 +69,7 @@ defmodule Unclickbaiter.MixProject do
        depth: 1},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
+      {:encrypted_secrets, "~> 0.3.0"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
@@ -76,6 +77,7 @@ defmodule Unclickbaiter.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:exvcr, "~> 0.17", only: :test},
       {:pre_commit, "~> 0.3.4", only: :dev},
       {:floki, "~> 0.36"},
       {:fast_html, "~> 2.0"}

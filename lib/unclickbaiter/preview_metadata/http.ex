@@ -1,65 +1,91 @@
 defmodule Unclickbaiter.PreviewMetadata.HTTP do
   @moduledoc """
-  Fetches the HTML of a given URL (following redirects) and extracts the
-  OpenGraph/Twitter preview metadata from it.
+  Fetches the preview metadata of a given URL.
+
+  Uses `Unclickbaiter.PreviewMetadata.HTTP.Simple` to fetch and parse the page.
+  When that fails, falls back to the jsonlink.io API via
+  `Unclickbaiter.PreviewMetadata.HTTP.JsonLink`, and finally to the opengraph.io
+  API via `Unclickbaiter.PreviewMetadata.HTTP.OpenGraphIO`.
+
+  When a fallback provider succeeds for a domain, it is cached in
+  `Unclickbaiter.PreviewMetadata.HTTP.ProviderCache`, so later fetches for the
+  same domain go straight to the cached provider, skipping the providers that
+  failed before.
   """
 
-  alias Unclickbaiter.PreviewMetadata.HTTP.Parser
-
-  @user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+  alias Unclickbaiter.PreviewMetadata.HTTP.JsonLink
+  alias Unclickbaiter.PreviewMetadata.HTTP.OpenGraphIO
+  alias Unclickbaiter.PreviewMetadata.HTTP.ProviderCache
+  alias Unclickbaiter.PreviewMetadata.HTTP.Simple
 
   @doc """
   Fetches `url` and returns `{:ok, %PreviewMetadata{}}` with the extracted
   metadata, or `{:error, reason}`.
   """
   def fetch(url) when is_binary(url) do
-    case get(url) do
-      {:ok, response, final_url} ->
-        {:ok, Parser.parse(response.body, final_url)}
+    host = URI.parse(url).host
 
-      {:error, reason} ->
-        {:error, reason}
+    case host && ProviderCache.get(String.downcase(host)) do
+      nil -> fetch_chain(url, host)
+      provider -> provider.fetch(url)
     end
   end
 
   def fetch(_url), do: {:error, :invalid_url}
 
-  def get(url) do
-    request(
-      url: url,
-      max_redirects: 5,
-      receive_timeout: 10_000,
-      headers: [{"user-agent", @user_agent}]
-    )
+  defp fetch_chain(url, host) do
+    case Simple.get(url) do
+      {:ok, response, final_url} ->
+        {:ok, Simple.parse(response.body, final_url)}
+
+      {:error, _reason} ->
+        json_link_fallback(url, host)
+    end
+  rescue
+    _exception -> json_link_fallback(url, host)
   end
 
-  defp request(options) do
-    options =
-      options
-      |> Keyword.put(:retry, false)
-      |> Keyword.merge(Application.get_env(:unclickbaiter, :req_options, []))
+  defp json_link_fallback(url, host) do
+    case JsonLink.fetch(url) do
+      {:ok, _pm} = ok ->
+        cache(host, JsonLink)
+        ok
 
-    case Req.Request.run_request(Req.new(options)) do
-      {request, %{status: status} = response} when status in 200..299 ->
-        if challenged?(response) do
-          {:error, {:challenge, URI.to_string(request.url)}}
-        else
-          {:ok, response, URI.to_string(request.url)}
-        end
-
-      {_request, %{status: status}} ->
-        {:error, {:http_error, status}}
-
-      {_request, %{__exception__: true} = exception} ->
-        {:error, exception}
+      # we want this fallback to be here as we have only
+      # 100 requests to this service, requiring a fallback
+      # even when the provider is cached
+      {:error, _reason} ->
+        opengraph_fallback(url, host)
     end
   end
 
-  defp challenged?(%{headers: headers}) do
-    case headers["x-amzn-waf-action"] do
-      ["challenge" | _] -> true
-      ["captcha" | _] -> true
-      _ -> false
+  defp opengraph_fallback(url, host) do
+    case OpenGraphIO.fetch(url) do
+      {:ok, _pm} = ok ->
+        cache(host, OpenGraphIO)
+        ok
+
+      {:error, _reason} = error ->
+        error
+    end
+  end
+
+  defp cache(nil, _provider), do: :ok
+
+  defp cache(host, provider),
+    do: ProviderCache.put_if_new(String.downcase(host), provider)
+
+  @doc """
+  Returns true when `url` is fetchable, i.e. it has an http/https scheme
+  and a non-empty host.
+  """
+  def fetchable_url?(url) do
+    case URI.parse(url) do
+      %URI{scheme: scheme, host: host} when scheme in ["http", "https"] ->
+        is_binary(host) and host != ""
+
+      _ ->
+        false
     end
   end
 end

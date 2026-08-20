@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "options": {
+        "httpc_options": {
+          "body_format": "binary"
+        },
+        "http_options": {
+          "timeout": "30000"
+        }
+      },
+      "body": "",
+      "url": "https://opengraph.io/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F07%2F14%2Flocal%2Fnoticia%2Fpresidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701",
+      "headers": {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "method": "get",
+      "request_body": ""
+    },
+    "response": {
+      "binary": false,
+      "type": "ok",
+      "body": "{\"hybridGraph\":{\"title\":\"Presidente da Câmara de Setúbal suspende mandato durante três meses\",\"description\":\"Maria das Dores Meira pediu a suspensão do seu mandato pelo período de 90 dias por motivos de saúde.\",\"type\":\"article\",\"image\":\"https://imagens.publico.pt/imagens.aspx/2102592?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\",\"url\":\"https://www.publico.pt/2026/07/14/local/noticia/presidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701\",\"favicon\":\"https://static.publico.pt/files/site/assets/img/ico/favicon-32x32.png\",\"site_name\":\"PÚBLICO\"},\"openGraph\":{\"title\":\"Presidente da Câmara de Setúbal suspende mandato durante três meses\",\"description\":\"Maria das Dores Meira pediu a suspensão do seu mandato pelo período de 90 dias por motivos de saúde.\",\"type\":\"article\",\"image\":{\"url\":\"https://imagens.publico.pt/imagens.aspx/2102592?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\"},\"url\":\"https://www.publico.pt/2026/07/14/local/noticia/presidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701\",\"site_name\":\"PÚBLICO\"},\"htmlInferred\":{\"title\":\"Presidente da Câmara de Setúbal suspende mandato durante três meses\",\"description\":\"Maria das Dores Meira pediu a suspensão do seu mandato pelo período de 90 dias por motivos de saúde.\",\"type\":\"site\",\"image\":\"https://imagens.publico.pt/imagens.aspx/2102592?tp=UH&db=IMAGENS&type=JPG&share=1&o=BarraFacebook_Publico.png\",\"url\":\"https://www.publico.pt\",\"favicon\":\"https://static.publico.pt/files/site/assets/img/ico/favicon-32x32.png\",\"site_name\":\"Presidente da Câmara de Setúbal suspende mandato durante três meses\",\"images\":[\"https://static.publico.pt/s3/files/mypublico/wrapper.png\",\"https://imagens.publico.pt/imagens.aspx/2102592?tp=UH&db=IMAGENS&type=JPG&w=320&act=resize\",\"https://static.publico.pt/img/dispositivos.png\",\"https://static.publico.pt/img/livro-reclamacoes.png\",\"https://static.publico.pt/img/e-goi-logo.png\"]},\"requestInfo\":{\"redirects\":0,\"host\":\"https://www.publico.pt/2026/07/14/local/noticia/presidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701\",\"responseCode\":200,\"cache_ok\":false,\"max_cache_age\":432000000,\"accept_lang\":\"en-US,en;q=0.9\",\"ai_sanitize\":false,\"originalUrl\":\"/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F07%2F14%2Flocal%2Fnoticia%2Fpresidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701?app_id=REDACTED&cache_ok=false&retry=true&auto_proxy=true&auto_render=true&use_premium=true&use_superior=true&full_render=true\",\"url\":\"https://www.publico.pt/2026/07/14/local/noticia/presidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701\",\"full_render\":true,\"wait_for_selector\":null,\"scroll_to_bottom\":false,\"use_ai\":false,\"requests_limit\":\"5\",\"proxy_limit\":\"1\",\"request_increase\":\"true\",\"api_request_count_full_render\":\"10\",\"isFreeTier\":false,\"ai_sanitize_mode\":\"sanitize\",\"has_ai_sanitize\":true,\"has_ai_sanitize_classifier\":true,\"_apiVersion\":\"3.0\",\"use_proxy\":false,\"use_premium\":true,\"use_superior\":true,\"auto_proxy\":true,\"api_request_count_proxy\":\"10\",\"api_request_count_premium\":\"20\",\"api_request_count_superior\":\"30\",\"has_auto_proxy_feature\":\"true\",\"has_ai_feature\":\"true\",\"retry\":true,\"max_retries\":4,\"retry_escalate\":true,\"auto_render\":true,\"requestCount\":60,\"responseLength\":\"642610\",\"responseContentType\":\"application/json\"},\"accept_lang\":\"en-US,en;q=0.9\",\"is_cache\":false,\"url\":\"https://www.publico.pt/2026/07/14/local/noticia/presidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701\",\"originalUrl\":\"/api/3.0/site/https%3A%2F%2Fwww.publico.pt%2F2026%2F07%2F14%2Flocal%2Fnoticia%2Fpresidente-camara-setubal-suspende-mandato-durante-tres-meses-2181701?app_id=REDACTED&cache_ok=false&retry=true&auto_proxy=true&auto_render=true&use_premium=true&use_superior=true&full_render=true\"}",
+      "headers": {
+        "cache-control": "no-store",
+        "date": "Thu, 20 Aug 2026 11:16:40 GMT",
+        "etag": "W/\"f1a-Gm2A3QhfOKuv/lNrE+WpRGfR4UE\"",
+        "vary": "Origin",
+        "content-length": "3866",
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Billing-Requests",
+        "x-billing-requests": "60"
+      },
+      "status_code": [
+        "HTTP/1.1",
+        200,
+        "OK"
+      ]
+    }
+  }
+]
