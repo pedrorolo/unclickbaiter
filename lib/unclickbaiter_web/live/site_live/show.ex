@@ -1,6 +1,7 @@
 defmodule UnclickbaiterWeb.SiteLive.Show do
   use UnclickbaiterWeb, :live_view
 
+  alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Sites
 
   @impl true
@@ -8,38 +9,41 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="max-w-3xl mx-auto mt-6 text-center">
-        <%= if assigns[:page_image_url] do %>
-          <img
-            src={@page_image_url}
-            alt={@site.preview_metadata.title}
-            class="mx-auto mb-4 rounded shadow-sm w-full max-w-md object-cover"
-          />
-        <% end %>
-
-        <p
-          id="redirect-notice"
-          phx-hook=".RedirectToSite"
-          phx-update="ignore"
-          data-url={@site.url}
-          class="mt-2"
-        >
+        <p class="mt-2">
           The preview of the original site has been overwritten by unclickbaiter.
         </p>
 
-        <p class="mt-2">
-          Redirecting to {URI.parse(@site.url).host ||
-            @site.url} in 10 seconds...
-        </p>
+        <div class="mt-6">
+          <.button id="original-site-link" href={@site.url} variant="primary">
+            <.icon name="hero-arrow-right" class="size-4" />
+            Continue to {URI.parse(@site.url).host || @site.url}
+          </.button>
+        </div>
 
-        <script :type={Phoenix.LiveView.ColocatedHook} name=".RedirectToSite">
-          export default {
-            mounted() {
-              setTimeout(() => {
-                window.location.href = this.el.dataset.url
-              }, 0)
-            }
-          }
-        </script>
+        <div class="mt-8 grid grid-cols-1 gap-6 text-left sm:grid-cols-2">
+          <div>
+            <h2 class="text-lg font-semibold leading-8">Original preview</h2>
+            <.preview_card
+              id="original-preview-card"
+              class="mt-2"
+              url={@site.url}
+              title={@site.original_preview_metadata.title}
+              description={@site.original_preview_metadata.description}
+              image_url={@site.original_preview_metadata.image_url}
+            />
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold leading-8">New preview</h2>
+            <.preview_card
+              id="new-preview-card"
+              class="mt-2"
+              url={@site.url}
+              title={@site.preview_metadata.title}
+              description={@site.preview_metadata.description}
+              image_url={@site.preview_metadata.image_url}
+            />
+          </div>
+        </div>
       </div>
     </Layouts.app>
     """
@@ -51,7 +55,11 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
 
     {:ok,
      socket
-     |> assign(:site, site)
+     |> assign(:site, %{
+       site
+       | original_preview_metadata:
+           site.original_preview_metadata || %PreviewMetadata{}
+     })
      |> assign(:metadata, site_to_metadata(site))}
   end
 

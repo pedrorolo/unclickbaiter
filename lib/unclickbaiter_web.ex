@@ -86,6 +86,7 @@ defmodule UnclickbaiterWeb do
       import Phoenix.HTML
       # Core UI components
       import UnclickbaiterWeb.CoreComponents
+      import UnclickbaiterWeb.Components.PreviewCard, only: [preview_card: 1]
 
       # App-level view helpers (Rails-style helpers equivalent)
       import UnclickbaiterWeb.ViewHelpers

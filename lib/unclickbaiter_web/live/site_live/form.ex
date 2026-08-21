@@ -55,48 +55,15 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
 
       <div class="mt-8">
         <h2 class="text-lg font-semibold leading-8">Preview</h2>
-        <div
+        <.preview_card
           id="preview-card"
-          class="card mt-2 overflow-hidden border border-base-300 bg-base-100"
-        >
-          <%= if @metadata_fetching do %>
-            <div class="flex h-40 w-full items-center justify-center bg-base-200">
-              <.icon
-                name="hero-arrow-path"
-                class="size-10 animate-spin text-base-content/30"
-              />
-            </div>
-            <div class="space-y-2 p-4">
-              <div class="h-4 w-1/2 animate-pulse rounded bg-base-200"></div>
-              <div class="h-3 w-3/4 animate-pulse rounded bg-base-200"></div>
-              <div class="h-3 w-2/3 animate-pulse rounded bg-base-200"></div>
-            </div>
-          <% else %>
-            <%= if preview_image_url(@form) do %>
-              <div class="bg-base-200">
-                <img
-                  src={preview_image_url(@form)}
-                  alt="Preview image"
-                  class="mx-auto max-h-72 w-full object-contain"
-                  onerror="this.remove()"
-                />
-              </div>
-            <% else %>
-              <div class="flex h-40 w-full items-center justify-center bg-base-200">
-                <.icon name="hero-photo" class="size-10 text-base-content/30" />
-              </div>
-            <% end %>
-            <div class="p-4">
-              <p class="text-sm text-muted">{preview_url(@form) || "—"}</p>
-              <h3 class="mt-1 text-xl font-semibold leading-snug">
-                {preview_value(@form, :title) || "Title"}
-              </h3>
-              <p class="mt-1 text-sm text-base-content/70">
-                {preview_value(@form, :description) || "Description"}
-              </p>
-            </div>
-          <% end %>
-        </div>
+          class="mt-2"
+          fetching={@metadata_fetching}
+          url={preview_url(@form)}
+          title={preview_value(@form, :title)}
+          description={preview_value(@form, :description)}
+          image_url={preview_image_url(@form)}
+        />
       </div>
     </Layouts.app>
     """
