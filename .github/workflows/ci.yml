@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    name: mix test
+    name: mix test --cover
     runs-on: ubuntu-latest
     services:
       db:
@@ -29,19 +29,22 @@ jobs:
           elixir-version: "1.20.3"
           otp-version: "29.0.5"
 
-      - uses: actions/cache@v4
+      - name: Cache dependencies and build
+        uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-${{ hashFiles('mix.lock') }}
+          key: >-
+            ${{ runner.os }}-mix-${{
+            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml') }}
           restore-keys: ${{ runner.os }}-mix-
 
       - name: Install dependencies
         run: mix deps.get
 
       - name: Run tests
-        run: mix test
+        run: mix test --cover
 
   credo:
     name: mix credo
@@ -54,12 +57,15 @@ jobs:
           elixir-version: "1.20.3"
           otp-version: "29.0.5"
 
-      - uses: actions/cache@v4
+      - name: Cache dependencies and build
+        uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-${{ hashFiles('mix.lock') }}
+          key: >-
+            ${{ runner.os }}-mix-${{
+            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml') }}
           restore-keys: ${{ runner.os }}-mix-
 
       - name: Install dependencies
