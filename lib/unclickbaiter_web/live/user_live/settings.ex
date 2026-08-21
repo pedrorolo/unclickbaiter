@@ -12,11 +12,18 @@ defmodule UnclickbaiterWeb.UserLive.Settings do
       <div class="text-center">
         <.header>
           Account Settings
-          <:subtitle>Manage your account email address and password settings</:subtitle>
+          <:subtitle>
+            Manage your account email address and password settings
+          </:subtitle>
         </.header>
       </div>
 
-      <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
+      <.form
+        for={@email_form}
+        id="email_form"
+        phx-submit="update_email"
+        phx-change="validate_email"
+      >
         <.input
           field={@email_form[:email]}
           type="email"
@@ -77,7 +84,11 @@ defmodule UnclickbaiterWeb.UserLive.Settings do
           put_flash(socket, :info, "Email changed successfully.")
 
         {:error, _} ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(
+            socket,
+            :error,
+            "Email change link is invalid or it has expired."
+          )
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -85,8 +96,12 @@ defmodule UnclickbaiterWeb.UserLive.Settings do
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
-    email_changeset = Accounts.change_user_email(user, %{}, validate_unique: false)
-    password_changeset = Accounts.change_user_password(user, %{}, hash_password: false)
+
+    email_changeset =
+      Accounts.change_user_email(user, %{}, validate_unique: false)
+
+    password_changeset =
+      Accounts.change_user_password(user, %{}, hash_password: false)
 
     socket =
       socket
@@ -124,11 +139,14 @@ defmodule UnclickbaiterWeb.UserLive.Settings do
           &url(~p"/users/settings/confirm-email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info =
+          "A link to confirm your email change has been sent to the new address."
+
         {:noreply, socket |> put_flash(:info, info)}
 
       changeset ->
-        {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
+        {:noreply,
+         assign(socket, :email_form, to_form(changeset, action: :insert))}
     end
   end
 
@@ -151,10 +169,12 @@ defmodule UnclickbaiterWeb.UserLive.Settings do
 
     case Accounts.change_user_password(user, user_params) do
       %{valid?: true} = changeset ->
-        {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
+        {:noreply,
+         assign(socket, trigger_submit: true, password_form: to_form(changeset))}
 
       changeset ->
-        {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
+        {:noreply,
+         assign(socket, password_form: to_form(changeset, action: :insert))}
     end
   end
 end

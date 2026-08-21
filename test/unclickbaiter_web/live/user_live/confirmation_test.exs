@@ -7,11 +7,17 @@ defmodule UnclickbaiterWeb.UserLive.ConfirmationTest do
   alias Unclickbaiter.Accounts
 
   setup do
-    %{unconfirmed_user: unconfirmed_user_fixture(), confirmed_user: user_fixture()}
+    %{
+      unconfirmed_user: unconfirmed_user_fixture(),
+      confirmed_user: user_fixture()
+    }
   end
 
   describe "Confirm user" do
-    test "renders confirmation page for unconfirmed user", %{conn: conn, unconfirmed_user: user} do
+    test "renders confirmation page for unconfirmed user", %{
+      conn: conn,
+      unconfirmed_user: user
+    } do
       token =
         extract_user_token(fn url ->
           Accounts.deliver_login_instructions(user, url)
@@ -21,7 +27,10 @@ defmodule UnclickbaiterWeb.UserLive.ConfirmationTest do
       assert html =~ "Confirm and stay logged in"
     end
 
-    test "renders login page for confirmed user", %{conn: conn, confirmed_user: user} do
+    test "renders login page for confirmed user", %{
+      conn: conn,
+      confirmed_user: user
+    } do
       token =
         extract_user_token(fn url ->
           Accounts.deliver_login_instructions(user, url)
@@ -32,7 +41,10 @@ defmodule UnclickbaiterWeb.UserLive.ConfirmationTest do
       assert html =~ "Keep me logged in on this device"
     end
 
-    test "renders login page for already logged in user", %{conn: conn, confirmed_user: user} do
+    test "renders login page for already logged in user", %{
+      conn: conn,
+      confirmed_user: user
+    } do
       conn = log_in_user(conn, user)
 
       token =

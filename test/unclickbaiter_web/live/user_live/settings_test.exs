@@ -28,7 +28,8 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
       {:ok, conn} =
         conn
         |> log_in_user(user_fixture(),
-          token_authenticated_at: DateTime.add(DateTime.utc_now(:second), -11, :minute)
+          token_authenticated_at:
+            DateTime.add(DateTime.utc_now(:second), -11, :minute)
         )
         |> live(~p"/users/settings")
         |> follow_redirect(conn, ~p"/users/log-in")
@@ -74,7 +75,10 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
       assert result =~ "must have the @ sign and no spaces"
     end
 
-    test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
+    test "renders errors with invalid data (phx-submit)", %{
+      conn: conn,
+      user: user
+    } do
       {:ok, lv, _html} = live(conn, ~p"/users/settings")
 
       result =
@@ -115,7 +119,8 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
 
       assert redirected_to(new_password_conn) == ~p"/users/settings"
 
-      assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
+      assert get_session(new_password_conn, :user_token) !=
+               get_session(conn, :user_token)
 
       assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
                "Password updated successfully"
@@ -167,14 +172,24 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
+          Accounts.deliver_user_update_email_instructions(
+            %{user | email: email},
+            user.email,
+            url
+          )
         end)
 
       %{conn: log_in_user(conn, user), token: token, email: email, user: user}
     end
 
-    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+    test "updates the user email once", %{
+      conn: conn,
+      user: user,
+      token: token,
+      email: email
+    } do
+      {:error, redirect} =
+        live(conn, ~p"/users/settings/confirm-email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings"
@@ -184,7 +199,9 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
       assert Accounts.get_user_by_email(email)
 
       # use confirm token again
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+      {:error, redirect} =
+        live(conn, ~p"/users/settings/confirm-email/#{token}")
+
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings"
       assert %{"error" => message} = flash
@@ -202,7 +219,10 @@ defmodule UnclickbaiterWeb.UserLive.SettingsTest do
 
     test "redirects if user is not logged in", %{token: token} do
       conn = build_conn()
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+
+      {:error, redirect} =
+        live(conn, ~p"/users/settings/confirm-email/#{token}")
+
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
       assert %{"error" => message} = flash

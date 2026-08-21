@@ -44,7 +44,14 @@ defmodule Unclickbaiter.Accounts.UserToken do
   def build_session_token(user) do
     token = :crypto.strong_rand_bytes(@rand_size)
     dt = user.authenticated_at || DateTime.utc_now(:second)
-    {token, %UserToken{token: token, context: "session", user_id: user.id, authenticated_at: dt}}
+
+    {token,
+     %UserToken{
+       token: token,
+       context: "session",
+       user_id: user.id,
+       authenticated_at: dt
+     }}
   end
 
   @doc """
@@ -60,7 +67,9 @@ defmodule Unclickbaiter.Accounts.UserToken do
       from token in by_token_and_context_query(token, "session"),
         join: user in assoc(token, :user),
         where: token.inserted_at > ago(@session_validity_in_days, "day"),
-        select: {%{user | authenticated_at: token.authenticated_at}, token.inserted_at}
+        select:
+          {%{user | authenticated_at: token.authenticated_at},
+           token.inserted_at}
 
     {:ok, query}
   end
@@ -112,7 +121,9 @@ defmodule Unclickbaiter.Accounts.UserToken do
         query =
           from token in by_token_and_context_query(hashed_token, "login"),
             join: user in assoc(token, :user),
-            where: token.inserted_at > ago(^@magic_link_validity_in_minutes, "minute"),
+            where:
+              token.inserted_at >
+                ago(^@magic_link_validity_in_minutes, "minute"),
             where: token.sent_to == user.email,
             select: {user, token}
 
@@ -141,7 +152,8 @@ defmodule Unclickbaiter.Accounts.UserToken do
 
         query =
           from token in by_token_and_context_query(hashed_token, context),
-            where: token.inserted_at > ago(@change_email_validity_in_days, "day")
+            where:
+              token.inserted_at > ago(@change_email_validity_in_days, "day")
 
         {:ok, query}
 

@@ -21,7 +21,11 @@ defmodule UnclickbaiterWeb.UserLive.Confirmation do
           action={~p"/users/log-in?_action=confirmed"}
           phx-trigger-action={@trigger_submit}
         >
-          <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
+          <input
+            type="hidden"
+            name={@form[:token].name}
+            value={@form[:token].value}
+          />
           <.button
             name={@form[:remember_me].name}
             value="true"
@@ -30,7 +34,10 @@ defmodule UnclickbaiterWeb.UserLive.Confirmation do
           >
             Confirm and stay logged in
           </.button>
-          <.button phx-disable-with="Confirming..." class="btn btn-primary btn-soft w-full mt-2">
+          <.button
+            phx-disable-with="Confirming..."
+            class="btn btn-primary btn-soft w-full mt-2"
+          >
             Confirm and log in only this time
           </.button>
         </.form>
@@ -44,7 +51,11 @@ defmodule UnclickbaiterWeb.UserLive.Confirmation do
           action={~p"/users/log-in"}
           phx-trigger-action={@trigger_submit}
         >
-          <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
+          <input
+            type="hidden"
+            name={@form[:token].name}
+            value={@form[:token].value}
+          />
           <%= if @current_scope do %>
             <.button phx-disable-with="Logging in..." class="btn btn-primary w-full">
               Log in
@@ -58,7 +69,10 @@ defmodule UnclickbaiterWeb.UserLive.Confirmation do
             >
               Keep me logged in on this device
             </.button>
-            <.button phx-disable-with="Logging in..." class="btn btn-primary btn-soft w-full mt-2">
+            <.button
+              phx-disable-with="Logging in..."
+              class="btn btn-primary btn-soft w-full mt-2"
+            >
               Log me in only this time
             </.button>
           <% end %>
@@ -89,6 +103,7 @@ defmodule UnclickbaiterWeb.UserLive.Confirmation do
 
   @impl true
   def handle_event("submit", %{"user" => params}, socket) do
-    {:noreply, assign(socket, form: to_form(params, as: "user"), trigger_submit: true)}
+    {:noreply,
+     assign(socket, form: to_form(params, as: "user"), trigger_submit: true)}
   end
 end

@@ -1,8 +1,11 @@
 defmodule Unclickbaiter.Accounts.UserNotifier do
+  @moduledoc """
+  Delivers account emails such as log in and confirmation instructions.
+  """
   import Swoosh.Email
 
-  alias Unclickbaiter.Mailer
   alias Unclickbaiter.Accounts.User
+  alias Unclickbaiter.Mailer
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do

@@ -27,7 +27,9 @@ defmodule UnclickbaiterWeb.UserLive.LoginTest do
 
       assert html =~ "If your email is in our system"
 
-      assert Unclickbaiter.Repo.get_by!(Unclickbaiter.Accounts.UserToken, user_id: user.id).context ==
+      assert Unclickbaiter.Repo.get_by!(Unclickbaiter.Accounts.UserToken,
+               user_id: user.id
+             ).context ==
                "login"
     end
 
@@ -51,7 +53,11 @@ defmodule UnclickbaiterWeb.UserLive.LoginTest do
 
       form =
         form(lv, "#login_form_password",
-          user: %{email: user.email, password: valid_user_password(), remember_me: true}
+          user: %{
+            email: user.email,
+            password: valid_user_password(),
+            remember_me: true
+          }
         )
 
       conn = submit_form(form, conn)
@@ -59,24 +65,31 @@ defmodule UnclickbaiterWeb.UserLive.LoginTest do
       assert redirected_to(conn) == ~p"/"
     end
 
-    test "redirects to login page with a flash error if credentials are invalid", %{
-      conn: conn
-    } do
+    test "redirects to login page with a flash error if credentials are invalid",
+         %{
+           conn: conn
+         } do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
       form =
-        form(lv, "#login_form_password", user: %{email: "test@email.com", password: "123456"})
+        form(lv, "#login_form_password",
+          user: %{email: "test@email.com", password: "123456"}
+        )
 
       render_submit(form, %{user: %{remember_me: true}})
 
       conn = follow_trigger_action(form, conn)
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
+               "Invalid email or password"
+
       assert redirected_to(conn) == ~p"/users/log-in"
     end
   end
 
   describe "login navigation" do
-    test "redirects to registration page when the Register button is clicked", %{conn: conn} do
+    test "redirects to registration page when the Register button is clicked",
+         %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
       {:ok, _login_live, login_html} =
