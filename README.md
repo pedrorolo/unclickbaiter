@@ -1,3 +1,6 @@
+[![CI](https://github.com/pedrorolo/unclickbaiter/actions/workflows/ci.yml/badge.svg)](https://github.com/pedrorolo/unclickbaiter/actions/workflows/ci.yml)
+[![Deploy](https://github.com/pedrorolo/unclickbaiter/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/pedrorolo/unclickbaiter/actions/workflows/deploy.yml)
+
 # Unclickbaiter
 
 To start your Phoenix server:
