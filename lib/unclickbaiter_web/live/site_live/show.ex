@@ -60,7 +60,8 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
        | original_preview_metadata:
            site.original_preview_metadata || %PreviewMetadata{}
      })
-     |> assign(:metadata, site_to_metadata(site))}
+     |> assign(:metadata, site_to_metadata(site))
+     |> assign(:page_title, site.preview_metadata.title)}
   end
 
   defp site_to_metadata(site) do

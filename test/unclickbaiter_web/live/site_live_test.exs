@@ -43,6 +43,12 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ site.url
     end
 
+    test "falls back to the page title when there is no metadata", %{conn: conn} do
+      {:ok, _index_live, html} = live(conn, ~p"/sites")
+
+      assert html =~ ~r/<title[^>]*>\s*Listing Sites\s*<\/title>/
+    end
+
     test "saves new site", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/sites")
 
@@ -117,6 +123,23 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ site.url
       assert html =~ ~s(property="og:title")
       assert html =~ ~s(property="og:description")
+    end
+
+    test "sets the document title from the preview metadata", %{
+      conn: conn,
+      site: site
+    } do
+      {:ok, _show_live, html} = live(conn, ~p"/sites/#{site}")
+
+      assert html =~
+               ~r/<title[^>]*>\s*#{Regex.escape(site.preview_metadata.title)}\s*<\/title>/
+    end
+
+    test "keeps the app name in the header", %{conn: conn, site: site} do
+      {:ok, show_live, _html} = live(conn, ~p"/sites/#{site}")
+
+      assert has_element?(show_live, "header h1", "Unclickbaiter")
+      refute has_element?(show_live, "header h1", site.preview_metadata.title)
     end
 
     test "shows link to the original site", %{conn: conn, site: site} do
