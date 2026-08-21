@@ -5,8 +5,6 @@ defmodule Unclickbaiter.Application do
 
   use Application
 
-  require Logger
-
   @impl true
   def start(_type, _args) do
     env = Application.get_env(:unclickbaiter, :env)
@@ -42,7 +40,6 @@ defmodule Unclickbaiter.Application do
 
   defp read_secrets do
     key = master_key()
-    log_secrets_load(key, secrets_path())
     EncryptedSecrets.read!(key, secrets_path())
   end
 
@@ -56,10 +53,6 @@ defmodule Unclickbaiter.Application do
 
   defp master_key_from_file do
     master_key_path() |> File.read!() |> String.trim()
-  end
-
-  defp log_secrets_load(key, path) do
-    Logger.info("Loading encrypted secrets: MASTER_KEY=#{key}, file=#{path}")
   end
 
   defp secrets_path, do: Path.join(priv_dir(), "secrets/secrets.yml.enc")
