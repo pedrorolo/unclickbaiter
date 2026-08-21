@@ -102,4 +102,9 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
+/* Let the site title textarea honor rows=2 (daisyUI .textarea forces a taller min-height) */
+#site-form textarea[name='site[preview_metadata][title]'] {
+  min-height: auto;
+}
+
 /* This file is for your main application CSS */

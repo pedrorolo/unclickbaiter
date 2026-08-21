@@ -35,8 +35,13 @@ defmodule UnclickbaiterWeb.SiteLive.Form do
           </div>
         <% end %>
         <.inputs_for :let={pm} field={@form[:preview_metadata]}>
-          <.input field={pm[:title]} type="text" label="Title" />
-          <.input field={pm[:description]} type="text" label="Description" />
+          <.input field={pm[:title]} type="textarea" label="Title" rows={2} />
+          <.input
+            field={pm[:description]}
+            type="textarea"
+            label="Description"
+            rows={4}
+          />
           <.input field={pm[:image_url]} type="text" label="Image URL" />
         </.inputs_for>
         <%= if has_original_preview_metadata?(@site) ||

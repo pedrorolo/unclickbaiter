@@ -116,7 +116,9 @@ defmodule Unclickbaiter.MixProject do
         "format",
         "test --cover",
         "credo --strict"
-      ]
+      ],
+      server: ["phx.server"],
+      migrate: ["ecto.migrate"]
     ]
   end
 
