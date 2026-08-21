@@ -49,8 +49,8 @@ defmodule UnclickbaiterWeb.GoogleAuthController do
           "the email on your Google account is not verified"
         )
 
-      _error ->
-        handle_auth_error(conn)
+      error ->
+        handle_auth_error(conn, error)
     end
   end
 

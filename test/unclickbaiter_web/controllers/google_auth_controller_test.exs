@@ -15,6 +15,8 @@ defmodule UnclickbaiterWeb.GoogleAuthControllerTest do
   end
 
   describe "GET /auth/google/callback" do
+    @describetag capture_log: true
+
     test "flashes an error when google reports one", %{conn: conn} do
       conn = get(conn, "/auth/google/callback?error=access_denied")
 
