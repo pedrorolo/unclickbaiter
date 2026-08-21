@@ -25,9 +25,10 @@ jobs:
           gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_API_KEY"
           chmod 600 ~/.netrc
 
-      - name: Register ephemeral SSH key
+      - name: Configure SSH access
         run: |
           mkdir -p ~/.ssh
+          printf 'Host *.ssh.gigalixir.com\n  StrictHostKeyChecking accept-new\n' >> ~/.ssh/config
           ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
           gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_ed25519.pub)"
 
