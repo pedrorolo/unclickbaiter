@@ -1,10 +1,10 @@
-defmodule Unclickbaiter.Sites.Site do
+defmodule Unclickbaiter.Previews.Preview do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
 
-  schema "sites" do
+  schema "previews" do
     field :url, :string
 
     belongs_to :preview_metadata, PreviewMetadata, on_replace: :delete
@@ -14,8 +14,8 @@ defmodule Unclickbaiter.Sites.Site do
   end
 
   @doc false
-  def changeset(site, attrs) do
-    site
+  def changeset(preview, attrs) do
+    preview
     |> cast(attrs, [:url])
     |> validate_required([:url])
     |> cast_assoc(:preview_metadata, required: true)

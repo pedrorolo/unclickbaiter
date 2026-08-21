@@ -34,15 +34,15 @@ defmodule UnclickbaiterWeb.Router do
 
     get "/", PageController, :home
 
-    live "/sites", SiteLive.Index, :index
-    live "/sites/new", SiteLive.Form, :new
-    live "/sites/:id/edit", SiteLive.Form, :edit
+    live "/previews", PreviewLive.Index, :index
+    live "/previews/new", PreviewLive.Form, :new
+    live "/previews/:id/edit", PreviewLive.Form, :edit
   end
 
   scope "/", UnclickbaiterWeb do
     pipe_through :browser
 
-    live "/sites/:id", SiteLive.Show, :show
+    live "/previews/:id", PreviewLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

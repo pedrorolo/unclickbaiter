@@ -13,10 +13,10 @@ defmodule Unclickbaiter.PreviewMetadataTest do
   end
 
   describe "fetch/1" do
-    test "returns the stored original preview metadata when a site exists for the url" do
+    test "returns the stored original preview metadata when a preview exists for the url" do
       url = "https://example.com/cached"
 
-      Unclickbaiter.Sites.create_site(%{
+      Unclickbaiter.Previews.create_preview(%{
         url: url,
         preview_metadata: %{
           title: "Preview title",
@@ -36,10 +36,10 @@ defmodule Unclickbaiter.PreviewMetadataTest do
               }} = PreviewMetadata.fetch(url)
     end
 
-    test "delegates to the http fetch when the site has no original preview metadata" do
+    test "delegates to the http fetch when the preview has no original preview metadata" do
       url = "https://example.com"
 
-      Unclickbaiter.Sites.create_site(%{
+      Unclickbaiter.Previews.create_preview(%{
         url: url,
         preview_metadata: %{
           title: "Preview title",

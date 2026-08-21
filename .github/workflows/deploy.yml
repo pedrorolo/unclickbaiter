@@ -14,17 +14,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Gigalixir credentials
+      - name: Install Gigalixir CLI
+        run: pipx install gigalixir
+
+      - name: Log in to Gigalixir
         env:
           GIGALIXIR_EMAIL: ${{ secrets.GIGALIXIR_EMAIL }}
           GIGALIXIR_API_KEY: ${{ secrets.GIGALIXIR_API_KEY }}
         run: |
-          printf 'machine git.gigalixir.com\n  login %s\n  password %s\n' \
-            "$GIGALIXIR_EMAIL" "$GIGALIXIR_API_KEY" > ~/.netrc
+          gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_API_KEY"
           chmod 600 ~/.netrc
+
+      - name: Register ephemeral SSH key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+          gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_ed25519.pub)"
 
       - name: Add Gigalixir git remote
         run: git remote add gigalixir https://git.gigalixir.com/unclickbaiter.git
 
       - name: Push to Gigalixir
         run: git push gigalixir HEAD:refs/heads/main
+
+      - name: Run migrations
+        run: gigalixir ps:migrate

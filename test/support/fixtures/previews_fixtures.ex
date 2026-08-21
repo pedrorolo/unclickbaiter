@@ -1,14 +1,14 @@
-defmodule Unclickbaiter.SitesFixtures do
+defmodule Unclickbaiter.PreviewsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Unclickbaiter.Sites` context.
+  entities via the `Unclickbaiter.Previews` context.
   """
 
   @doc """
-  Generate a site.
+  Generate a preview.
   """
-  def site_fixture(attrs \\ %{}) do
-    {:ok, site} =
+  def preview_fixture(attrs \\ %{}) do
+    {:ok, preview} =
       attrs
       |> Enum.into(%{
         url: "some url",
@@ -18,8 +18,8 @@ defmodule Unclickbaiter.SitesFixtures do
           image_url: "https://example.com/image.png"
         }
       })
-      |> Unclickbaiter.Sites.create_site()
+      |> Unclickbaiter.Previews.create_preview()
 
-    site
+    preview
   end
 end
