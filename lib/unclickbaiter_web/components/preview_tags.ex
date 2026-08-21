@@ -50,6 +50,7 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
         {"og:title", "My Site"},
         {"og:image:width", "1200"},
         {"og:image:height", "630"},
+        {"og:image:type", "image/jpeg"},
         {"twitter:card", "summary_large_image"},
         {"twitter:title", "My Site"}
       ]
@@ -71,6 +72,7 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
       # render the image without having to fetch and measure it themselves
       {"og:image:width", "1200"},
       {"og:image:height", "630"},
+      {"og:image:type", "image/jpeg"},
       {"twitter:card", metadata[:twitter_card]},
       {"twitter:title", metadata[:title]},
       {"twitter:description", metadata[:description]},
