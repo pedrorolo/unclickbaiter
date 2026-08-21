@@ -119,11 +119,45 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ ~s(property="og:description")
     end
 
-    test "shows redirect notice", %{conn: conn, site: site} do
+    test "shows link to the original site", %{conn: conn, site: site} do
       {:ok, show_live, _html} = live(conn, ~p"/sites/#{site}")
 
-      assert has_element?(show_live, "#redirect-notice")
-      assert render(show_live) =~ site.url
+      assert has_element?(show_live, "#original-site-link")
+
+      assert render(element(show_live, "#original-site-link")) =~
+               ~s(href="#{site.url}")
+    end
+
+    test "shows original and new previews side by side", %{conn: conn} do
+      site =
+        site_fixture(%{
+          url: "https://example.com",
+          preview_metadata: %{
+            title: "New Title",
+            description: "New description",
+            image_url: "https://cdn.example.com/new.png"
+          },
+          original_preview_metadata: %{
+            title: "Original Title",
+            description: "Original description",
+            image_url: "https://cdn.example.com/original.png"
+          }
+        })
+
+      {:ok, show_live, _html} = live(conn, ~p"/sites/#{site}")
+
+      assert has_element?(show_live, "#original-preview-card")
+      assert has_element?(show_live, "#new-preview-card")
+
+      original_card = render(element(show_live, "#original-preview-card"))
+      assert original_card =~ "Original Title"
+      assert original_card =~ "Original description"
+      assert original_card =~ ~s(src="https://cdn.example.com/original.png")
+
+      new_card = render(element(show_live, "#new-preview-card"))
+      assert new_card =~ "New Title"
+      assert new_card =~ "New description"
+      assert new_card =~ ~s(src="https://cdn.example.com/new.png")
     end
   end
 
