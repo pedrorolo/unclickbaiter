@@ -37,7 +37,7 @@ jobs:
             _build
           key: >-
             ${{ runner.os }}-mix-${{
-            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml') }}
+            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml', '.github/workflows/*.yml') }}
           restore-keys: ${{ runner.os }}-mix-
 
       - name: Install dependencies
@@ -45,10 +45,14 @@ jobs:
 
       - name: Run tests
         run: mix test --cover
+        env:
+          MASTER_KEY: ${{ secrets.MASTER_KEY }}
 
   credo:
     name: mix credo
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
     steps:
       - uses: actions/checkout@v4
 
@@ -65,7 +69,7 @@ jobs:
             _build
           key: >-
             ${{ runner.os }}-mix-${{
-            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml') }}
+            hashFiles('mix.lock', 'elixir_buildpack.config', 'mise.toml', '.github/workflows/*.yml') }}
           restore-keys: ${{ runner.os }}-mix-
 
       - name: Install dependencies
