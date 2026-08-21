@@ -52,17 +52,11 @@
           {@current_scope.user.email}
         </li>
         <li>
-          <.link href={~p"/users/settings"}>Settings</.link>
-        </li>
-        <li>
-          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+          <.link href={~p"/log-out"} method="delete">Log out</.link>
         </li>
       <% else %>
         <li>
-          <.link href={~p"/users/register"}>Register</.link>
-        </li>
-        <li>
-          <.link href={~p"/users/log-in"}>Log in</.link>
+          <.link href={~p"/auth/google"} class="btn btn-primary">Sign in with Google</.link>
         </li>
       <% end %>
     </ul>

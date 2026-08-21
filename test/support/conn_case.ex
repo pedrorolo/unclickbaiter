@@ -17,7 +17,6 @@ defmodule UnclickbaiterWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
-  alias Unclickbaiter.Accounts.Scope
   alias Unclickbaiter.AccountsFixtures
 
   using do
@@ -37,26 +36,6 @@ defmodule UnclickbaiterWeb.ConnCase do
   setup tags do
     Unclickbaiter.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
-  end
-
-  @doc """
-  Setup helper that registers and logs in users.
-
-      setup :register_and_log_in_user
-
-  It stores an updated connection and a registered user in the
-  test context.
-  """
-  def register_and_log_in_user(%{conn: conn} = context) do
-    user = AccountsFixtures.user_fixture()
-    scope = Scope.for_user(user)
-
-    opts =
-      context
-      |> Map.take([:token_authenticated_at])
-      |> Enum.into([])
-
-    %{conn: log_in_user(conn, user, opts), user: user, scope: scope}
   end
 
   @doc """
