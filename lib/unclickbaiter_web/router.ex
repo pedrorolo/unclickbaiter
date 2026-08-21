@@ -1,6 +1,8 @@
 defmodule UnclickbaiterWeb.Router do
   use UnclickbaiterWeb, :router
 
+  import UnclickbaiterWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule UnclickbaiterWeb.Router do
     plug :put_root_layout, html: {UnclickbaiterWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_scope_for_user
   end
 
   pipeline :browser_auth do
@@ -65,5 +68,20 @@ defmodule UnclickbaiterWeb.Router do
       live_dashboard "/dashboard", metrics: UnclickbaiterWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  ## Authentication routes
+
+  scope "/auth", UnclickbaiterWeb do
+    pipe_through :browser
+
+    get "/google", GoogleAuthController, :request
+    get "/google/callback", GoogleAuthController, :callback
+  end
+
+  scope "/", UnclickbaiterWeb do
+    pipe_through :browser
+
+    delete "/log-out", GoogleAuthController, :delete
   end
 end

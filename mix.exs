@@ -42,6 +42,7 @@ defmodule Unclickbaiter.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:assent, "~> 0.3"},
       {:phoenix, "~> 1.8.9"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},

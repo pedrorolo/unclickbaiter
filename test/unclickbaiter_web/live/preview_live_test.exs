@@ -141,7 +141,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     test "keeps the app name in the header", %{conn: conn, preview: preview} do
       {:ok, show_live, _html} = live(conn, ~p"/previews/#{preview}")
 
-      assert has_element?(show_live, "header h1", "Unclickbaiter")
+      assert has_element?(show_live, "header h1", "unclickbaiter")
 
       refute has_element?(
                show_live,

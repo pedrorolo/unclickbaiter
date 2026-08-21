@@ -8,7 +8,8 @@ defmodule Unclickbaiter.Application do
   @impl true
   def start(_type, _args) do
     env = Application.get_env(:unclickbaiter, :env)
-    secrets = read_secrets()[env]
+    all_secrets = read_secrets()
+    secrets = Map.get(all_secrets, env) || all_secrets
     Application.put_env(:unclickbaiter, :secrets, secrets)
 
     children = [
