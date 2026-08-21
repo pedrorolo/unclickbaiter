@@ -126,6 +126,9 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ ~s(property="og:image")
       assert html =~ ~s(name="description")
       assert html =~ ~s(name="image")
+
+      assert html =~
+               ~s(property="og:url" content="http://localhost:4000/sites/#{site.id}")
     end
 
     test "sets the document title from the preview metadata", %{

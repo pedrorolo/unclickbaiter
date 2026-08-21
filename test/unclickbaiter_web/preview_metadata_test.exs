@@ -55,7 +55,8 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
     assert html =~
              ~s(property="og:description" content="#{site.preview_metadata.description}")
 
-    assert html =~ ~s(property="og:url" content="#{site.url}")
+    assert html =~
+             ~s(property="og:url" content="http://localhost:4000/sites/#{site.id}")
 
     assert html =~
              ~s(property="og:image" content="#{site.preview_metadata.image_url}")

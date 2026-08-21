@@ -70,7 +70,9 @@ defmodule UnclickbaiterWeb.SiteLive.Show do
     %{
       title: pm.title,
       description: pm.description,
-      url: site.url,
+      # Point og:url at this page so scrapers treat it as canonical instead of
+      # re-scraping the original article
+      url: UnclickbaiterWeb.Endpoint.url() <> ~p"/sites/#{site}",
       image: pm.image_url,
       type: "website",
       twitter_card: "summary_large_image"
