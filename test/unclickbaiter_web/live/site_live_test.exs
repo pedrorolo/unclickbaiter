@@ -123,6 +123,9 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ site.url
       assert html =~ ~s(property="og:title")
       assert html =~ ~s(property="og:description")
+      assert html =~ ~s(property="og:image")
+      assert html =~ ~s(name="description")
+      assert html =~ ~s(name="image")
     end
 
     test "sets the document title from the preview metadata", %{
@@ -235,18 +238,16 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert render(
                element(
                  form_live,
-                 "#site-form input[name='site[preview_metadata][title]']"
+                 "#site-form textarea[name='site[preview_metadata][title]']"
                )
-             ) =~
-               ~s(value="Fetched Title")
+             ) =~ ">Fetched Title</textarea>"
 
       assert render(
                element(
                  form_live,
-                 "#site-form input[name='site[preview_metadata][description]']"
+                 "#site-form textarea[name='site[preview_metadata][description]']"
                )
-             ) =~
-               ~s(value="Fetched description")
+             ) =~ ">Fetched description</textarea>"
 
       assert render(
                element(
