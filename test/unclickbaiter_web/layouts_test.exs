@@ -11,7 +11,7 @@ defmodule UnclickbaiterWeb.LayoutsTest do
       })
 
     html = IO.iodata_to_binary(html)
-    assert html =~ "Unclickbaiter"
+    assert html =~ "unclickbaiter"
     assert html =~ "Share links with custom OpenGraph metadata"
     assert html =~ "Hello Body"
   end

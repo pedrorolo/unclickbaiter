@@ -38,10 +38,10 @@ defmodule UnclickbaiterWeb.Layouts do
     assigns = assign_new(assigns, :current_scope, fn -> nil end)
 
     ~H"""
-    <header class="px-6 py-6 border-b bg-base-100">
+    <header class="px-6 pt-0 pb-10 border-b bg-base-100">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold">Unclickbaiter</h1>
+          <h1 class="text-4xl font-bold mb-4">unclickbaiter</h1>
           <p class="text-sm text-muted">
             Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.
           </p>

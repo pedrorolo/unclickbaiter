@@ -4,9 +4,9 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
   import Phoenix.LiveViewTest
   import Unclickbaiter.PreviewsFixtures
 
-  @default_title "Unclickbaiter"
+  @default_title "unclickbaiter"
   @default_description "Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation."
-  @default_site_name "Unclickbaiter"
+  @default_site_name "unclickbaiter"
   @default_type "website"
   @default_twitter_card "summary_large_image"
 
