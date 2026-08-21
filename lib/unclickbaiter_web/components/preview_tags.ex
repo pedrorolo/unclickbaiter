@@ -38,8 +38,14 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
 
   ## Examples
 
-      iex> to_meta_tags(%{title: "My Site"})
+      iex> to_meta_tags(%{
+      ...>   title: "My Site",
+      ...>   description: "My description",
+      ...>   image: "https://example.com/img.png"
+      ...> })
       [
+        {"description", "My description"},
+        {"image", "https://example.com/img.png"},
         {"og:type", "website"},
         {"og:title", "My Site"},
         {"twitter:card", "summary_large_image"},
@@ -51,6 +57,8 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
     metadata = Map.merge(default_metadata(), metadata)
 
     [
+      {"description", metadata[:description]},
+      {"image", metadata[:image]},
       {"og:type", metadata[:type]},
       {"og:title", metadata[:title]},
       {"og:description", metadata[:description]},
