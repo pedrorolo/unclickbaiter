@@ -1,0 +1,30 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Gigalixir
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Gigalixir credentials
+        env:
+          GIGALIXIR_EMAIL: ${{ secrets.GIGALIXIR_EMAIL }}
+          GIGALIXIR_API_KEY: ${{ secrets.GIGALIXIR_API_KEY }}
+        run: |
+          printf 'machine git.gigalixir.com\n  login %s\n  password %s\n' \
+            "$GIGALIXIR_EMAIL" "$GIGALIXIR_API_KEY" > ~/.netrc
+          chmod 600 ~/.netrc
+
+      - name: Add Gigalixir git remote
+        run: git remote add gigalixir https://git.gigalixir.com/unclickbaiter.git
+
+      - name: Push to Gigalixir
+        run: git push gigalixir HEAD:refs/heads/main

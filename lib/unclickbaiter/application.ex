@@ -10,7 +10,7 @@ defmodule Unclickbaiter.Application do
   @impl true
   def start(_type, _args) do
     env = Application.get_env(:unclickbaiter, :env)
-    secrets = read_secrets(env)[env]
+    secrets = read_secrets()[env]
     Application.put_env(:unclickbaiter, :secrets, secrets)
 
     children = [
@@ -40,15 +40,22 @@ defmodule Unclickbaiter.Application do
     :ok
   end
 
-  defp read_secrets(:prod) do
-    key = System.fetch_env!("MASTER_KEY")
+  defp read_secrets do
+    key = master_key()
     log_secrets_load(key, secrets_path())
     EncryptedSecrets.read!(key, secrets_path())
   end
 
-  defp read_secrets(_env) do
-    key = File.read!(master_key_path()) |> String.trim()
-    EncryptedSecrets.read!(key, secrets_path())
+  defp master_key do
+    case System.get_env("MASTER_KEY", "") |> String.trim() do
+      "" -> master_key_from_file()
+      nil -> master_key_from_file()
+      key -> key
+    end
+  end
+
+  defp master_key_from_file do
+    master_key_path() |> File.read!() |> String.trim()
   end
 
   defp log_secrets_load(key, path) do
