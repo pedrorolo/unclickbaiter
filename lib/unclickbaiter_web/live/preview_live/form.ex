@@ -90,8 +90,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    preview = Previews.get_preview!(id)
+  defp apply_action(socket, :edit, %{"slug" => slug}) do
+    preview = Previews.get_preview_by_slug!(slug)
 
     socket
     |> assign(:page_title, "Edit Preview")

@@ -36,6 +36,8 @@ defmodule Unclickbaiter.SitesTest do
       assert preview.url == "some url"
       assert preview.preview_metadata.description == "some description"
       assert preview.preview_metadata.title == "some title"
+      assert preview.slug
+      assert String.length(preview.slug) == 5
     end
 
     test "create_preview/1 with original_preview_metadata stores both metadata records" do

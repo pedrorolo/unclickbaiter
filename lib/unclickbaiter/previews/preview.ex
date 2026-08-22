@@ -2,10 +2,13 @@ defmodule Unclickbaiter.Previews.Preview do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Phoenix.Param, key: :slug}
+
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
 
   schema "previews" do
     field :url, :string
+    field :slug, :string
 
     belongs_to :preview_metadata, PreviewMetadata, on_replace: :delete
     belongs_to :original_preview_metadata, PreviewMetadata, on_replace: :delete

@@ -38,5 +38,41 @@ jobs:
       - name: Push to Gigalixir
         run: git push gigalixir HEAD:refs/heads/main
 
+      - name: Capture current release version
+        id: before
+        run: |
+          version="$(gigalixir ps 2>/dev/null | awk 'NR==2{print $2}')"
+          echo "previous_version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for the new release to be online
+        env:
+          PREV_VERSION: ${{ steps.before.outputs.previous_version }}
+        run: |
+          for i in $(seq 1 60); do
+            output="$(gigalixir ps 2>/dev/null || true)"
+            version="$(echo "$output" | awk 'NR==2{print $2}')"
+
+            if echo "$output" | grep -qiE "Running|up|healthy"; then
+              if [ -n "$PREV_VERSION" ] && [ "$version" != "$PREV_VERSION" ]; then
+                echo "New release ($version) is online."
+                exit 0
+              fi
+
+              if [ -z "$PREV_VERSION" ]; then
+                echo "App is online."
+                exit 0
+              fi
+
+              echo "Old release still serving; waiting for the new release..."
+            else
+              echo "App not yet online (attempt $i/60)..."
+            fi
+
+            sleep 10
+          done
+
+          echo "New app did not come online; aborting before running migrations."
+          exit 1
+
       - name: Run migrations
         run: gigalixir ps:migrate

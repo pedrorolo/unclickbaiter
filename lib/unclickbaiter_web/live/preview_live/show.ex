@@ -50,8 +50,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
   end
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
-    preview = Previews.get_preview!(id)
+  def mount(%{"slug" => slug}, _session, socket) do
+    preview = Previews.get_preview_by_slug!(slug)
 
     {:ok,
      socket

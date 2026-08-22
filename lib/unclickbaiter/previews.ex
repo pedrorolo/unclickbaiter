@@ -8,6 +8,7 @@ defmodule Unclickbaiter.Previews do
 
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Previews.Preview
+  alias Unclickbaiter.Slug
 
   @doc """
   Returns the list of previews.
@@ -44,6 +45,25 @@ defmodule Unclickbaiter.Previews do
   end
 
   @doc """
+  Gets a single preview by its slug.
+
+  Raises `Ecto.NoResultsError` if no preview exists with the given slug.
+
+  ## Examples
+
+      iex> get_preview_by_slug!("some-slug")
+      %Preview{}
+
+      iex> get_preview_by_slug!("unknown-slug")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_preview_by_slug!(slug) when is_binary(slug) do
+    Repo.get_by!(Preview, slug: slug)
+    |> Repo.preload([:preview_metadata, :original_preview_metadata])
+  end
+
+  @doc """
   Creates a preview.
 
   ## Examples
@@ -56,10 +76,15 @@ defmodule Unclickbaiter.Previews do
 
   """
   def create_preview(attrs) do
-    %Preview{}
-    |> Preview.changeset(attrs)
-    |> Repo.insert()
-    |> preload_preview_metadata()
+    Slug.with_new_slug(
+      Preview,
+      fn changeset ->
+        changeset
+        |> Preview.changeset(attrs)
+        |> Repo.insert()
+        |> preload_preview_metadata()
+      end
+    )
   end
 
   @doc """

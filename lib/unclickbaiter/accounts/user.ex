@@ -4,6 +4,7 @@ defmodule Unclickbaiter.Accounts.User do
 
   schema "users" do
     field :email, :string
+    field :slug, :string
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
 

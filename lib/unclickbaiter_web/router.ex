@@ -39,13 +39,13 @@ defmodule UnclickbaiterWeb.Router do
 
     live "/previews", PreviewLive.Index, :index
     live "/previews/new", PreviewLive.Form, :new
-    live "/previews/:id/edit", PreviewLive.Form, :edit
+    live "/previews/:slug/edit", PreviewLive.Form, :edit
   end
 
   scope "/", UnclickbaiterWeb do
     pipe_through :browser
 
-    live "/previews/:id", PreviewLive.Show, :show
+    live "/previews/:slug", PreviewLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
