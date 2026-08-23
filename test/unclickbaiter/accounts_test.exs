@@ -39,56 +39,6 @@ defmodule Unclickbaiter.AccountsTest do
       assert user.confirmed_at
     end
 
-    test "assigns a unique slug to the new user" do
-      email = unique_user_email()
-
-      {:ok, user} =
-        Accounts.upsert_google_user(%{
-          "email" => email,
-          "email_verified" => true
-        })
-
-      assert user.slug
-      assert String.length(user.slug) == 5
-    end
-
-    test "gives each new user a distinct slug" do
-      {:ok, first} =
-        Accounts.upsert_google_user(%{
-          "email" => unique_user_email(),
-          "email_verified" => true
-        })
-
-      {:ok, second} =
-        Accounts.upsert_google_user(%{
-          "email" => unique_user_email(),
-          "email_verified" => true
-        })
-
-      assert first.slug
-      assert second.slug
-      assert first.slug != second.slug
-    end
-
-    test "does not change the slug when the user already exists" do
-      {:ok, user} =
-        Accounts.upsert_google_user(%{
-          "email" => unique_user_email(),
-          "email_verified" => true
-        })
-
-      original_slug = user.slug
-
-      {:ok, updated} =
-        Accounts.upsert_google_user(%{
-          "email" => user.email,
-          "email_verified" => true
-        })
-
-      assert updated.id == user.id
-      assert updated.slug == original_slug
-    end
-
     test "returns the existing user on subsequent sign-ins" do
       attrs = valid_google_attributes()
       {:ok, first} = Accounts.upsert_google_user(attrs)

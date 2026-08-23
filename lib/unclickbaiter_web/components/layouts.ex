@@ -41,7 +41,9 @@ defmodule UnclickbaiterWeb.Layouts do
     <header class="px-6 pt-0 pb-10 border-b bg-base-100">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
-          <h1 class="text-4xl font-bold mb-4">unclickbaiter</h1>
+          <h1 class="text-4xl font-bold mb-4">
+            <.link href={~p"/"} class="hover:opacity-80 transition-opacity">unclickbaiter</.link>
+          </h1>
           <p class="text-sm text-muted">
             Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.
           </p>
@@ -62,6 +64,19 @@ defmodule UnclickbaiterWeb.Layouts do
         <% end %>
       </div>
     </main>
+
+    <div id="clipboard-hook" phx-hook=".Clipboard" phx-update="ignore"></div>
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".Clipboard">
+      export default {
+        mounted() {
+          this.handleEvent("copy-to-clipboard", ({url}) => {
+            const fullUrl = window.location.origin + url;
+            navigator.clipboard.writeText(fullUrl);
+          });
+        }
+      }
+    </script>
 
     <.flash_group flash={@flash} />
     """

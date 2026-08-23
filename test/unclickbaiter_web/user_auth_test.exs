@@ -126,7 +126,7 @@ defmodule UnclickbaiterWeb.UserAuthTest do
         |> assign(:current_scope, Scope.for_user(user))
         |> UserAuth.log_in_user(user)
 
-      assert redirected_to(conn) == ~p"/previews"
+      assert redirected_to(conn) == ~p"/p"
     end
 
     test "writes a cookie if remember_me was set in previous session", %{

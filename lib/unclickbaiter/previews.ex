@@ -6,23 +6,45 @@ defmodule Unclickbaiter.Previews do
   import Ecto.Query, warn: false
   alias Unclickbaiter.Repo
 
+  alias Unclickbaiter.Accounts.Scope
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Previews.Preview
   alias Unclickbaiter.Slug
 
   @doc """
-  Returns the list of previews.
+  Returns a page of previews for the given scope.
 
   ## Examples
 
-      iex> list_sites()
-      [%Preview{}, ...]
+      iex> list_previews(scope)
+      {[%Preview{}, ...], %Flop.Meta{}}
 
   """
-  def list_sites do
-    Preview
-    |> Repo.all()
-    |> Repo.preload([:preview_metadata, :original_preview_metadata])
+  def list_previews(%Scope{user: user}, params \\ %{}) do
+    %{"page" => page, "page_size" => page_size} =
+      Map.merge(%{"page" => "1", "page_size" => "10"}, params)
+
+    page = max(String.to_integer(page), 1)
+    page_size = min(max(String.to_integer(page_size), 1), 50)
+    offset = (page - 1) * page_size
+
+    base_query =
+      from(p in Preview,
+        where: p.user_id == ^user.id,
+        order_by: [desc: p.updated_at],
+        preload: [:preview_metadata, :original_preview_metadata]
+      )
+
+    total = Repo.aggregate(base_query, :count, :id)
+    previews = base_query |> offset(^offset) |> limit(^page_size) |> Repo.all()
+
+    {previews,
+     %{
+       page: page,
+       page_size: page_size,
+       total: total,
+       total_pages: ceil(total / page_size)
+     }}
   end
 
   @doc """
@@ -41,7 +63,7 @@ defmodule Unclickbaiter.Previews do
   """
   def get_preview!(id) do
     Repo.get!(Preview, id)
-    |> Repo.preload([:preview_metadata, :original_preview_metadata])
+    |> Repo.preload([:preview_metadata, :original_preview_metadata, :user])
   end
 
   @doc """
@@ -60,7 +82,7 @@ defmodule Unclickbaiter.Previews do
   """
   def get_preview_by_slug!(slug) when is_binary(slug) do
     Repo.get_by!(Preview, slug: slug)
-    |> Repo.preload([:preview_metadata, :original_preview_metadata])
+    |> Repo.preload([:preview_metadata, :original_preview_metadata, :user])
   end
 
   @doc """
@@ -68,19 +90,20 @@ defmodule Unclickbaiter.Previews do
 
   ## Examples
 
-      iex> create_preview(%{field: value})
+      iex> create_preview(scope, %{field: value})
       {:ok, %Preview{}}
 
-      iex> create_preview(%{field: bad_value})
+      iex> create_preview(scope, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_preview(attrs) do
+  def create_preview(%Scope{user: user}, attrs) do
     Slug.with_new_slug(
       Preview,
       fn changeset ->
         changeset
         |> Preview.changeset(attrs)
+        |> Ecto.Changeset.put_change(:user_id, user.id)
         |> Repo.insert()
         |> preload_preview_metadata()
       end

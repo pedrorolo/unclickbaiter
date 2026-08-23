@@ -14,10 +14,12 @@
       <Layouts.flash_group flash={@flash} />
     </div>
 
-    <div class="mt-8">
-      <.button id="browse-previews-link" href={~p"/previews"} variant="primary">
-        <.icon name="hero-squares-2x2" class="size-4" /> Browse previews
-      </.button>
-    </div>
+    <%= if @current_scope && @current_scope.user do %>
+      <div class="mt-8">
+        <.button id="browse-previews-link" href={~p"/p"} variant="primary">
+          <.icon name="hero-squares-2x2" class="size-4" /> Browse previews
+        </.button>
+      </div>
+    <% end %>
   </div>
 </div>

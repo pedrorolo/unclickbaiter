@@ -4,9 +4,10 @@ defmodule Unclickbaiter.Accounts.User do
 
   schema "users" do
     field :email, :string
-    field :slug, :string
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
+
+    has_many :previews, Unclickbaiter.Previews.Preview
 
     timestamps(type: :utc_datetime)
   end

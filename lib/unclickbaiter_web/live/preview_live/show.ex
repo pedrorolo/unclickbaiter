@@ -60,11 +60,11 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
        | original_preview_metadata:
            preview.original_preview_metadata || %PreviewMetadata{}
      })
-     |> assign(:metadata, site_to_metadata(preview))
+     |> assign(:metadata, preview_to_metadata(preview))
      |> assign(:page_title, preview.preview_metadata.title)}
   end
 
-  defp site_to_metadata(preview) do
+  defp preview_to_metadata(preview) do
     pm = preview.preview_metadata
 
     %{

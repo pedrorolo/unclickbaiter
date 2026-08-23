@@ -22,9 +22,15 @@ defmodule UnclickbaiterWeb.Components.PreviewCard do
 
   def preview_card(assigns) do
     ~H"""
-    <div
+    <a
       id={@id}
-      class={["card overflow-hidden border border-base-300 bg-base-100", @class]}
+      href={@url}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={[
+        "card overflow-hidden border border-base-300 bg-base-100 hover:shadow-lg transition-shadow",
+        @class
+      ]}
     >
       <%= if @fetching do %>
         <div class="flex h-40 w-full items-center justify-center bg-base-200">
@@ -63,7 +69,7 @@ defmodule UnclickbaiterWeb.Components.PreviewCard do
           </p>
         </div>
       <% end %>
-    </div>
+    </a>
     """
   end
 end

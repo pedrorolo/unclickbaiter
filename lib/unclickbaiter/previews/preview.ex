@@ -4,12 +4,14 @@ defmodule Unclickbaiter.Previews.Preview do
 
   @derive {Phoenix.Param, key: :slug}
 
+  alias Unclickbaiter.Accounts.User
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
 
   schema "previews" do
     field :url, :string
     field :slug, :string
 
+    belongs_to :user, User
     belongs_to :preview_metadata, PreviewMetadata, on_replace: :delete
     belongs_to :original_preview_metadata, PreviewMetadata, on_replace: :delete
 
