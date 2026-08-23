@@ -4,6 +4,8 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
   import Phoenix.LiveViewTest
   import Unclickbaiter.PreviewsFixtures
 
+  alias Unclickbaiter.AccountsFixtures
+
   @default_title "unclickbaiter"
   @default_description "Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation."
   @default_site_name "unclickbaiter"
@@ -28,17 +30,21 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
   end
 
   test "previews page renders the default preview metadata", %{conn: conn} do
-    preview_fixture()
+    user = AccountsFixtures.user_fixture()
+    conn = log_in_user(conn, user)
+    preview_fixture(%{user_id: user.id})
 
-    {:ok, _index_live, html} = live(conn, ~p"/previews")
+    {:ok, _index_live, html} = live(conn, ~p"/p")
 
     assert_default_preview_metadata(html)
   end
 
   test "edit page renders the default preview metadata", %{conn: conn} do
-    preview = preview_fixture()
+    user = AccountsFixtures.user_fixture()
+    conn = log_in_user(conn, user)
+    preview = preview_fixture(%{user_id: user.id})
 
-    {:ok, _edit_live, html} = live(conn, ~p"/previews/#{preview}/edit")
+    {:ok, _edit_live, html} = live(conn, ~p"/p/#{preview}/edit")
 
     assert_default_preview_metadata(html)
   end
@@ -47,7 +53,7 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
        %{conn: conn} do
     preview = preview_fixture()
 
-    {:ok, _show_live, html} = live(conn, ~p"/previews/#{preview}")
+    {:ok, _show_live, html} = live(conn, ~p"/p/#{preview}")
 
     assert html =~
              ~s(property="og:title" content="#{preview.preview_metadata.title}")

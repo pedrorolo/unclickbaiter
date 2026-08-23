@@ -36,16 +36,23 @@ defmodule UnclickbaiterWeb.Router do
     pipe_through :browser_auth
 
     get "/", PageController, :home
+  end
 
-    live "/previews", PreviewLive.Index, :index
-    live "/previews/new", PreviewLive.Form, :new
-    live "/previews/:slug/edit", PreviewLive.Form, :edit
+  scope "/", UnclickbaiterWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [{UnclickbaiterWeb.UserAuth, :require_authenticated}] do
+      live "/p", PreviewLive.Index, :index
+      live "/p/new", PreviewLive.Form, :new
+      live "/p/:slug/edit", PreviewLive.Form, :edit
+    end
   end
 
   scope "/", UnclickbaiterWeb do
     pipe_through :browser
 
-    live "/previews/:slug", PreviewLive.Show, :show
+    live "/p/:slug", PreviewLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

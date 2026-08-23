@@ -7,7 +7,6 @@ defmodule Unclickbaiter.Accounts do
   alias Unclickbaiter.Repo
 
   alias Unclickbaiter.Accounts.{User, UserToken}
-  alias Unclickbaiter.Slug
 
   ## Database getters
 
@@ -55,11 +54,9 @@ defmodule Unclickbaiter.Accounts do
         {:ok, user}
 
       nil ->
-        Slug.with_new_slug(User, fn changeset ->
-          changeset
-          |> User.google_changeset(attrs)
-          |> Repo.insert()
-        end)
+        %User{}
+        |> User.google_changeset(attrs)
+        |> Repo.insert()
     end
   end
 

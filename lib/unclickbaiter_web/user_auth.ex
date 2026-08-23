@@ -285,7 +285,7 @@ defmodule UnclickbaiterWeb.UserAuth do
   def signed_in_path(%Plug.Conn{
         assigns: %{current_scope: %Scope{user: %Accounts.User{}}}
       }) do
-    ~p"/previews"
+    ~p"/p"
   end
 
   def signed_in_path(_), do: ~p"/"

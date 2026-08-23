@@ -27,36 +27,38 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     }
   }
   @invalid_attrs %{url: nil, preview_metadata: %{description: nil, title: nil}}
-  defp create_preview(_) do
-    preview = preview_fixture()
+  defp create_preview(%{conn: conn}) do
+    user = Unclickbaiter.AccountsFixtures.user_fixture()
+    conn = log_in_user(conn, user)
+    preview = preview_fixture(%{user_id: user.id})
 
-    %{preview: preview}
+    %{preview: preview, user: user, conn: conn}
   end
 
   describe "Index" do
     setup [:create_preview]
 
     test "lists all previews", %{conn: conn, preview: preview} do
-      {:ok, _index_live, html} = live(conn, ~p"/previews")
+      {:ok, _index_live, html} = live(conn, ~p"/p")
 
       assert html =~ "Listing Previews"
       assert html =~ preview.url
     end
 
     test "falls back to the page title when there is no metadata", %{conn: conn} do
-      {:ok, _index_live, html} = live(conn, ~p"/previews")
+      {:ok, _index_live, html} = live(conn, ~p"/p")
 
       assert html =~ ~r/<title[^>]*>\s*Listing Previews\s*<\/title>/
     end
 
     test "saves new preview", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/previews")
+      {:ok, index_live, _html} = live(conn, ~p"/p")
 
       assert {:ok, form_live, _} =
                index_live
                |> element("a", "New Preview")
                |> render_click()
-               |> follow_redirect(conn, ~p"/previews/new")
+               |> follow_redirect(conn, ~p"/p/new")
 
       assert render(form_live) =~ "New Preview"
 
@@ -68,21 +70,21 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
                form_live
                |> form("#preview-form", preview: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/previews")
+               |> follow_redirect(conn, ~p"/p")
 
       html = render(index_live)
-      assert html =~ "Preview created successfully"
+      assert html =~ "Preview created!"
       assert html =~ "some url"
     end
 
     test "updates preview in listing", %{conn: conn, preview: preview} do
-      {:ok, index_live, _html} = live(conn, ~p"/previews")
+      {:ok, index_live, _html} = live(conn, ~p"/p")
 
       assert {:ok, form_live, _html} =
                index_live
-               |> element("#previews-#{preview.id} a", "Edit")
+               |> element("#previews-#{preview.id} a[aria-label=\"Edit\"]")
                |> render_click()
-               |> follow_redirect(conn, ~p"/previews/#{preview}/edit")
+               |> follow_redirect(conn, ~p"/p/#{preview}/edit")
 
       assert render(form_live) =~ "Edit Preview"
 
@@ -94,18 +96,18 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
                form_live
                |> form("#preview-form", preview: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/previews")
+               |> follow_redirect(conn, ~p"/p")
 
       html = render(index_live)
-      assert html =~ "Preview updated successfully"
+      assert html =~ "Preview updated!"
       assert html =~ "some updated url"
     end
 
     test "deletes preview in listing", %{conn: conn, preview: preview} do
-      {:ok, index_live, _html} = live(conn, ~p"/previews")
+      {:ok, index_live, _html} = live(conn, ~p"/p")
 
       assert index_live
-             |> element("#previews-#{preview.id} a", "Delete")
+             |> element("#previews-#{preview.id} a[aria-label=\"Delete\"]")
              |> render_click()
 
       refute has_element?(index_live, "#previews-#{preview.id}")
@@ -116,7 +118,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     setup [:create_preview]
 
     test "displays preview with og metadata", %{conn: conn, preview: preview} do
-      {:ok, _show_live, html} = live(conn, ~p"/previews/#{preview}")
+      {:ok, _show_live, html} = live(conn, ~p"/p/#{preview}")
 
       assert html =~ preview.preview_metadata.title
       assert html =~ preview.preview_metadata.description
@@ -132,14 +134,14 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       conn: conn,
       preview: preview
     } do
-      {:ok, _show_live, html} = live(conn, ~p"/previews/#{preview}")
+      {:ok, _show_live, html} = live(conn, ~p"/p/#{preview}")
 
       assert html =~
                ~r/<title[^>]*>\s*#{Regex.escape(preview.preview_metadata.title)}\s*<\/title>/
     end
 
     test "keeps the app name in the header", %{conn: conn, preview: preview} do
-      {:ok, show_live, _html} = live(conn, ~p"/previews/#{preview}")
+      {:ok, show_live, _html} = live(conn, ~p"/p/#{preview}")
 
       assert has_element?(show_live, "header h1", "unclickbaiter")
 
@@ -151,7 +153,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     end
 
     test "shows link to the original preview", %{conn: conn, preview: preview} do
-      {:ok, show_live, _html} = live(conn, ~p"/previews/#{preview}")
+      {:ok, show_live, _html} = live(conn, ~p"/p/#{preview}")
 
       assert has_element?(show_live, "#original-preview-link")
 
@@ -159,9 +161,13 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
                ~s(href="#{preview.url}")
     end
 
-    test "shows original and new previews side by side", %{conn: conn} do
+    test "shows original and new previews side by side", %{
+      conn: conn,
+      user: user
+    } do
       preview =
         preview_fixture(%{
+          user_id: user.id,
           url: "https://example.com",
           preview_metadata: %{
             title: "New Title",
@@ -175,7 +181,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
           }
         })
 
-      {:ok, show_live, _html} = live(conn, ~p"/previews/#{preview}")
+      {:ok, show_live, _html} = live(conn, ~p"/p/#{preview}")
 
       assert has_element?(show_live, "#original-preview-card")
       assert has_element?(show_live, "#new-preview-card")
@@ -193,6 +199,12 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
   end
 
   describe "Form metadata fetching" do
+    setup do
+      user = Unclickbaiter.AccountsFixtures.user_fixture()
+      conn = log_in_user(build_conn(), user)
+      %{conn: conn, user: user}
+    end
+
     defp allow_metadata_mock(lv) do
       Req.Test.allow(Unclickbaiter.PreviewMetadata.HTTP, self(), lv.pid)
     end
@@ -230,7 +242,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
         """)
       end)
 
-      {:ok, form_live, _html} = live(conn, ~p"/previews/new")
+      {:ok, form_live, _html} = live(conn, ~p"/p/new")
       allow_metadata_mock(form_live)
 
       form_live
@@ -300,7 +312,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
         """)
       end)
 
-      {:ok, form_live, _html} = live(conn, ~p"/previews/new")
+      {:ok, form_live, _html} = live(conn, ~p"/p/new")
       allow_metadata_mock(form_live)
 
       form_live
@@ -318,7 +330,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     end
 
     test "does not fetch metadata for invalid urls", %{conn: conn} do
-      {:ok, form_live, _html} = live(conn, ~p"/previews/new")
+      {:ok, form_live, _html} = live(conn, ~p"/p/new")
 
       form_live
       |> form("#preview-form", preview: %{url: "some url"})
@@ -338,7 +350,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
         end
       end)
 
-      {:ok, form_live, _html} = live(conn, ~p"/previews/new")
+      {:ok, form_live, _html} = live(conn, ~p"/p/new")
       allow_metadata_mock(form_live)
 
       form_live
@@ -362,7 +374,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
     test "shows a live preview of the preview metadata under the form", %{
       conn: conn
     } do
-      {:ok, form_live, _html} = live(conn, ~p"/previews/new")
+      {:ok, form_live, _html} = live(conn, ~p"/p/new")
 
       assert has_element?(form_live, "#preview-card")
 
@@ -385,9 +397,13 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert html =~ ~s(src="https://cdn.example.com/img.png")
     end
 
-    test "edit page shows saved metadata in the preview card", %{conn: conn} do
+    test "edit page shows saved metadata in the preview card", %{
+      conn: conn,
+      user: user
+    } do
       preview =
         preview_fixture(%{
+          user_id: user.id,
           url: "https://example.com",
           preview_metadata: %{
             title: "Saved Title",
@@ -396,7 +412,7 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
           }
         })
 
-      {:ok, form_live, _html} = live(conn, ~p"/previews/#{preview}/edit")
+      {:ok, form_live, _html} = live(conn, ~p"/p/#{preview}/edit")
 
       card = render(element(form_live, "#preview-card"))
       assert card =~ "Saved Title"
