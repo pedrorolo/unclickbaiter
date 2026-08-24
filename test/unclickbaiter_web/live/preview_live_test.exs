@@ -63,17 +63,20 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       assert render(form_live) =~ "New Preview"
 
       assert form_live
-             |> form("#preview-form", preview: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+             |> form("#preview-form", preview: %{url: "https://example.com"})
+             |> render_change() =~ "Title"
 
-      assert {:ok, index_live, _html} =
+      assert {:ok, redirected_live, html} =
                form_live
                |> form("#preview-form", preview: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/p")
+               |> follow_redirect(conn)
 
-      html = render(index_live)
-      assert html =~ "Preview created!"
+      assert html =~ "Preview saved!"
+      assert html =~ "Copy to clipboard"
+
+      html = render(redirected_live)
+      assert html =~ "Edit Preview"
       assert html =~ "some url"
     end
 
@@ -92,14 +95,12 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
              |> form("#preview-form", preview: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
-      assert {:ok, index_live, _html} =
-               form_live
-               |> form("#preview-form", preview: @update_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/p")
+      form_live
+      |> form("#preview-form", preview: @update_attrs)
+      |> render_submit()
 
-      html = render(index_live)
-      assert html =~ "Preview updated!"
+      html = render(form_live)
+      assert html =~ "Preview saved"
       assert html =~ "some updated url"
     end
 
@@ -111,6 +112,33 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
              |> render_click()
 
       refute has_element?(index_live, "#previews-#{preview.id}")
+    end
+
+    test "copy-show-url pushes copy event", %{conn: conn, preview: preview} do
+      {:ok, index_live, _html} = live(conn, ~p"/p")
+
+      assert index_live
+             |> element(
+               "#previews-#{preview.id} button[aria-label=\"Copy link\"]"
+             )
+             |> render_click()
+    end
+
+    test "paginate navigates between pages", %{conn: conn, preview: preview} do
+      for _ <- 1..10 do
+        preview_fixture(%{user_id: preview.user_id})
+      end
+
+      {:ok, index_live, _html} = live(conn, ~p"/p")
+
+      assert has_element?(index_live, "button", "Next")
+
+      index_live
+      |> element("button", "Next")
+      |> render_click()
+
+      html = render(index_live)
+      assert html =~ "Page 2"
     end
   end
 
@@ -377,6 +405,14 @@ defmodule UnclickbaiterWeb.SiteLiveTest do
       {:ok, form_live, _html} = live(conn, ~p"/p/new")
 
       assert has_element?(form_live, "#preview-card")
+
+      form_live
+      |> form("#preview-form",
+        preview: %{
+          url: "https://example.com"
+        }
+      )
+      |> render_change()
 
       form_live
       |> form("#preview-form",

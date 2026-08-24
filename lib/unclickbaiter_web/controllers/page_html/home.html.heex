@@ -7,7 +7,7 @@
 
     <h1 class="text-4xl font-bold">unclickbaiter</h1>
     <p class="mt-4 text-lg text-muted">
-      Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.
+      Alternative social-media previews to existing pages
     </p>
 
     <div class="mt-6">
@@ -16,8 +16,11 @@
 
     <%= if @current_scope && @current_scope.user do %>
       <div class="mt-8">
+        <.button id="browse-previews-link" href={~p"/p/new"} variant="primary">
+          <.icon name="hero-squares-2x2" class="size-4" /> Create preview
+        </.button>
         <.button id="browse-previews-link" href={~p"/p"} variant="primary">
-          <.icon name="hero-squares-2x2" class="size-4" /> Browse previews
+          <.icon name="hero-squares-2x2" class="size-4" /> My previews
         </.button>
       </div>
     <% end %>

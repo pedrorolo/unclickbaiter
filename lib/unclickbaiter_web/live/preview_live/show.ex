@@ -9,20 +9,28 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="max-w-3xl mx-auto mt-6 text-center">
-        <p class="mt-2">
-          The preview of the original preview has been overwritten by unclickbaiter.
-        </p>
-
-        <div class="mt-6">
+        <div class="mt-4">
+          <p id="countdown-message" class="mb-3 text-sm text-base-content/60">
+            Redirecting in <strong id="countdown">10</strong>
+            seconds unless you press
+            <button
+              type="button"
+              id="stop-countdown"
+              class="btn btn-xs btn-warning"
+            >Stop!</button>
+          </p>
           <.button id="original-preview-link" href={@preview.url} variant="primary">
             <.icon name="hero-arrow-right" class="size-4" />
             Continue to {URI.parse(@preview.url).host || @preview.url}
           </.button>
+          <p class="mt-4 text-sm text-base-content/60">
+            The preview of the original preview has been overwritten by unclickbaiter:
+          </p>
         </div>
 
         <div class="mt-8 grid grid-cols-1 gap-6 text-left sm:grid-cols-2">
           <div>
-            <h2 class="text-lg font-semibold leading-8">Original preview</h2>
+            <h2 class="text-lg font-semibold leading-8">Original</h2>
             <.preview_card
               id="original-preview-card"
               class="mt-2"
@@ -33,7 +41,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
             />
           </div>
           <div>
-            <h2 class="text-lg font-semibold leading-8">New preview</h2>
+            <h2 class="text-lg font-semibold leading-8">New</h2>
             <.preview_card
               id="new-preview-card"
               class="mt-2"
@@ -45,6 +53,39 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
           </div>
         </div>
       </div>
+      <div
+        id="redirect-countdown"
+        phx-hook=".RedirectCountdown"
+        data-url={@preview.url}
+        class="hidden"
+      >
+      </div>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".RedirectCountdown">
+        export default {
+          mounted() {
+            const url = this.el.getAttribute("data-url")
+            const countdownEl = document.getElementById("countdown")
+            const messageEl = document.getElementById("countdown-message")
+            const stopBtn = document.getElementById("stop-countdown")
+            let seconds = 10
+
+            const timer = setInterval(() => {
+              seconds--
+              countdownEl.textContent = seconds
+
+              if (seconds <= 0) {
+                clearInterval(timer)
+                window.location.href = url
+              }
+            }, 1000)
+
+            stopBtn.addEventListener("click", () => {
+              clearInterval(timer)
+              messageEl.remove()
+            })
+          }
+        }
+      </script>
     </Layouts.app>
     """
   end
