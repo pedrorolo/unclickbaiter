@@ -97,12 +97,37 @@ defmodule Unclickbaiter.PreviewMetadata.HTTP.Simple do
   end
 
   defp image_url(document, base_url) do
-    with url when is_binary(url) <- meta_content(document, "og:image") do
-      if String.starts_with?(url, "http") do
-        url
-      else
-        base_url |> URI.merge(url) |> URI.to_string()
-      end
+    url =
+      meta_content(document, "og:image") ||
+        meta_content(document, "twitter:image") ||
+        meta_content(document, "image") ||
+        link_image(document) ||
+        first_image(document)
+
+    case url do
+      url when is_binary(url) ->
+        if String.starts_with?(url, "http") do
+          url
+        else
+          base_url |> URI.merge(url) |> URI.to_string()
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  defp link_image(document) do
+    case Floki.attribute(document, ~s(link[rel="image_src"]), "href") do
+      [href | _] -> href
+      _ -> nil
+    end
+  end
+
+  defp first_image(document) do
+    case Floki.attribute(document, "img[src]", "src") do
+      [src | _] -> src
+      _ -> nil
     end
   end
 

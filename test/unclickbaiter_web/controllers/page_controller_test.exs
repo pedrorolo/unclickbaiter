@@ -4,7 +4,7 @@ defmodule UnclickbaiterWeb.PageControllerTest do
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
     body = html_response(conn, 200)
-    assert body =~ "Unclickbaiter"
-    assert body =~ "Share links with custom OpenGraph metadata"
+    assert body =~ "unclickbaiter"
+    assert body =~ "Alternative social-media previews to existing pages"
   end
 end

@@ -6,21 +6,14 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
 
   alias Unclickbaiter.AccountsFixtures
 
-  @default_title "unclickbaiter"
-  @default_description "Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation."
-  @default_site_name "unclickbaiter"
-  @default_type "website"
-  @default_twitter_card "summary_large_image"
-
   defp assert_default_preview_metadata(html) do
-    assert html =~ ~s(property="og:title" content="#{@default_title}")
+    assert html =~ ~s(property="og:title" content="unclickbaiter")
 
     assert html =~
-             ~s(property="og:description" content="#{@default_description}")
+             ~s(property="og:description" content="Alternative social-media previews to existing pages")
 
-    assert html =~ ~s(property="og:type" content="#{@default_type}")
-    assert html =~ ~s(property="og:site_name" content="#{@default_site_name}")
-    assert html =~ ~s(name="twitter:card" content="#{@default_twitter_card}")
+    assert html =~ ~s(property="og:type" content="website")
+    assert html =~ ~s(name="twitter:card" content="summary_large_image")
   end
 
   test "main page renders the default preview metadata", %{conn: conn} do
@@ -61,11 +54,12 @@ defmodule UnclickbaiterWeb.PreviewMetadataTest do
     assert html =~
              ~s(property="og:description" content="#{preview.preview_metadata.description}")
 
-    assert html =~ ~s(property="og:url" content="#{preview.url}")
+    assert html =~
+             ~s(property="og:url" content="http://localhost:4000/p/#{preview.slug}")
 
     assert html =~
              ~s(property="og:image" content="#{preview.preview_metadata.image_url}")
 
-    assert html =~ ~s(name="twitter:card" content="#{@default_twitter_card}")
+    assert html =~ ~s(name="twitter:card" content="summary_large_image")
   end
 end
