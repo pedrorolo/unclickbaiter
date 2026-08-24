@@ -17,50 +17,77 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
         </:subtitle>
       </.header>
 
+      <%= if @saved_preview do %>
+        <div class="alert alert-info mb-6 flex items-center gap-3">
+          <.icon name="hero-information-circle" class="size-5 shrink-0" />
+          <span>
+            Preview saved!
+            <.link
+              navigate={~p"/p/#{@saved_preview}"}
+              class="underline font-semibold"
+            >View it here</.link>
+          </span>
+          <button
+            type="button"
+            class="btn btn-xs btn-ghost"
+            phx-click="copy-show-url"
+            phx-value-slug={@saved_preview.slug}
+          >
+            <.icon name="hero-clipboard" class="size-4" /> Copy to clipboard
+          </button>
+        </div>
+      <% end %>
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <.form for={@form} id="preview-form" phx-change="validate" phx-submit="save">
           <.input field={@form[:url]} type="text" label="Url" />
-          <%= if @metadata_fetching do %>
-            <p class="mt-1 text-sm text-slate-500">Fetching preview metadata…</p>
-          <% end %>
-          <%= if @metadata_fetch_failed do %>
-            <div
-              id="metadata-fetch-error"
-              class="mt-2 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300"
-            >
-              <.icon
-                name="hero-exclamation-triangle"
-                class="mt-0.5 size-4 shrink-0"
+          <%= if preview_url(@form) do %>
+            <%= if @metadata_fetching do %>
+              <p class="mt-1 text-sm text-slate-500">Fetching preview metadata…</p>
+            <% end %>
+            <%= if @metadata_fetch_failed do %>
+              <div
+                id="metadata-fetch-error"
+                class="mt-2 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300"
+              >
+                <.icon
+                  name="hero-exclamation-triangle"
+                  class="mt-0.5 size-4 shrink-0"
+                />
+                <p>
+                  We couldn't fetch the preview metadata for this preview. Please fill in the
+                  fields manually.
+                </p>
+              </div>
+            <% end %>
+            <.inputs_for :let={pm} field={@form[:preview_metadata]}>
+              <.input field={pm[:title]} type="textarea" label="Title" rows={2} />
+              <.input
+                field={pm[:description]}
+                type="textarea"
+                label="Description"
+                rows={4}
               />
-              <p>
-                We couldn't fetch the preview metadata for this preview. Please fill in the
-                fields manually.
-              </p>
-            </div>
-          <% end %>
-          <.inputs_for :let={pm} field={@form[:preview_metadata]}>
-            <.input field={pm[:title]} type="textarea" label="Title" rows={2} />
-            <.input
-              field={pm[:description]}
-              type="textarea"
-              label="Description"
-              rows={4}
-            />
-            <.input field={pm[:image_url]} type="text" label="Image URL" />
-          </.inputs_for>
-          <%= if has_original_preview_metadata?(@preview) ||
-                  Map.has_key?(@form.params, "original_preview_metadata") do %>
-            <.inputs_for
-              :let={original_pm}
-              field={@form[:original_preview_metadata]}
-            >
-              <.input field={original_pm[:title]} type="hidden" />
-              <.input field={original_pm[:description]} type="hidden" />
-              <.input field={original_pm[:image_url]} type="hidden" />
+              <.input field={pm[:image_url]} type="text" label="Image URL" />
             </.inputs_for>
+            <%= if has_original_preview_metadata?(@preview) ||
+                    Map.has_key?(@form.params, "original_preview_metadata") do %>
+              <.inputs_for
+                :let={original_pm}
+                field={@form[:original_preview_metadata]}
+              >
+                <.input field={original_pm[:title]} type="hidden" />
+                <.input field={original_pm[:description]} type="hidden" />
+                <.input field={original_pm[:image_url]} type="hidden" />
+              </.inputs_for>
+            <% end %>
           <% end %>
           <footer>
-            <.button phx-disable-with="Saving..." variant="primary">Save Preview</.button>
+            <.button
+              :if={preview_url(@form)}
+              phx-disable-with="Saving..."
+              variant="primary"
+            >Save Preview</.button>
             <.button navigate={return_path(@return_to, @preview)}>Cancel</.button>
           </footer>
         </.form>
@@ -70,7 +97,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
             id="preview-card"
             class="mt-2"
             fetching={@metadata_fetching}
-            url={preview_url(@form)}
+            url={if @preview.slug, do: ~p"/p/#{@preview}", else: preview_url(@form)}
             title={preview_value(@form, :title)}
             description={preview_value(@form, :description)}
             image_url={preview_image_url(@form)}
@@ -91,6 +118,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
      |> assign(:metadata_fetch_ref, nil)
      |> assign(:metadata_fetching, false)
      |> assign(:metadata_fetch_failed, false)
+     |> assign(:saved_preview, nil)
      |> apply_action(socket.assigns.live_action, params)}
   end
 
@@ -108,11 +136,15 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
       )
       |> Phoenix.LiveView.redirect(to: ~p"/p")
     else
+      saved_preview =
+        if socket.assigns.flash["saved_preview_slug"] == slug, do: preview
+
       socket
       |> assign(:page_title, "Edit Preview")
       |> assign(:preview, preview)
       |> assign(:fetched_url, preview.url)
       |> assign(:form, to_form(Previews.change_preview(preview)))
+      |> assign(:saved_preview, saved_preview)
     end
   end
 
@@ -132,7 +164,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
     socket =
       assign(socket,
         preview_params: preview_params,
-        form: to_form(changeset, action: :validate)
+        form: to_form(changeset, action: :validate),
+        saved_preview: nil
       )
 
     {:noreply, fetch_preview_metadata(socket, preview_params)}
@@ -140,6 +173,11 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
 
   def handle_event("save", %{"preview" => preview_params}, socket) do
     save_preview(socket, socket.assigns.live_action, preview_params)
+  end
+
+  def handle_event("copy-show-url", %{"slug" => slug}, socket) do
+    url = "/p/#{slug}"
+    {:noreply, push_event(socket, "copy-to-clipboard", %{url: url})}
   end
 
   @impl true
@@ -222,10 +260,13 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
     else
       case Previews.update_preview(preview, preview_params) do
         {:ok, preview} ->
+          changeset = Previews.change_preview(preview)
+
           {:noreply,
            socket
-           |> put_flash(:preview_updated_slug, preview.slug)
-           |> push_navigate(to: return_path(socket.assigns.return_to, preview))}
+           |> assign(:preview, preview)
+           |> assign(:form, to_form(changeset))
+           |> assign(:saved_preview, preview)}
 
         {:error, %Ecto.Changeset{} = changeset} ->
           {:noreply, assign(socket, form: to_form(changeset))}
@@ -238,8 +279,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
       {:ok, preview} ->
         {:noreply,
          socket
-         |> put_flash(:preview_created_slug, preview.slug)
-         |> push_navigate(to: return_path(socket.assigns.return_to, preview))}
+         |> put_flash("saved_preview_slug", preview.slug)
+         |> push_navigate(to: ~p"/p/#{preview}/edit")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

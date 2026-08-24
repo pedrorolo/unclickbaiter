@@ -60,7 +60,6 @@ defmodule UnclickbaiterWeb.Components.PreviewCard do
           </div>
         <% end %>
         <div class="p-4">
-          <p class="text-sm text-muted">{@url || "—"}</p>
           <h3 class="mt-1 text-xl font-semibold leading-snug">
             {@title || "Title"}
           </h3>

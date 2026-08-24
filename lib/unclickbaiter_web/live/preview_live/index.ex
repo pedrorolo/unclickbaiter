@@ -7,26 +7,6 @@ defmodule UnclickbaiterWeb.PreviewLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <%= if slug = @flash["preview_created_slug"] || @flash["preview_updated_slug"] do %>
-        <div class="alert alert-info mb-6 flex items-center gap-3">
-          <.icon name="hero-information-circle" class="size-5 shrink-0" />
-          <span>
-            Preview {if @flash["preview_created_slug"],
-              do: "created",
-              else: "updated"}!
-            <.link navigate={~p"/p/#{slug}"} class="underline font-semibold">View it here</.link>
-          </span>
-          <button
-            type="button"
-            class="btn btn-xs btn-ghost"
-            phx-click="copy-show-url"
-            phx-value-slug={slug}
-          >
-            <.icon name="hero-clipboard" class="size-4" />
-          </button>
-        </div>
-      <% end %>
-
       <header class="flex items-center justify-between gap-6 pb-4">
         <div>
           <h1 class="text-lg font-semibold leading-8">
