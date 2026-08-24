@@ -107,4 +107,39 @@
   min-height: auto;
 }
 
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-base-300);
+  background: var(--color-base-300);
+  border-radius: 9999px;
+  padding: 3px 2px;
+  height: 22px;
+}
+
+.theme-toggle button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 200ms ease;
+  padding: 0;
+  margin: 0 2px;
+}
+
+/* Selected state */
+[data-theme-source="system"] .theme-toggle button[data-phx-theme="system"],
+[data-theme-source="user"][data-theme="light"] .theme-toggle button[data-phx-theme="light"],
+[data-theme-source="user"][data-theme="dark"] .theme-toggle button[data-phx-theme="dark"] {
+  border-color: var(--color-base-200);
+  background: var(--color-base-100);
+  filter: brightness(2);
+}
+
 /* This file is for your main application CSS */

@@ -38,19 +38,19 @@ defmodule UnclickbaiterWeb.Layouts do
     assigns = assign_new(assigns, :current_scope, fn -> nil end)
 
     ~H"""
-    <header class="px-6 pt-0 pb-10 border-b bg-base-100">
-      <div class="max-w-4xl mx-auto flex items-center justify-between">
-        <div>
-          <h1 class="text-4xl font-bold mb-4">
+    <header class="px-6 py-3 border-b bg-base-100">
+      <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex flex-col gap-2 flex-shrink-0">
+          <h1 class="text-3xl font-bold leading-none">
             <.link href={~p"/"} class="hover:opacity-80 transition-opacity">unclickbaiter</.link>
           </h1>
-          <p class="text-sm text-muted">
+          <p class="text-sm text-base-content/50">
             Alternative social-media previews to existing pages
           </p>
         </div>
-
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 flex-shrink-0">
           <.theme_toggle />
+          <.user_area current_scope={@current_scope} />
         </div>
       </div>
     </header>
@@ -141,35 +141,53 @@ defmodule UnclickbaiterWeb.Layouts do
   """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 [[data-theme-source=system]_&]:!left-0 transition-[left]" />
-
+    <div class="theme-toggle">
       <button
-        class="flex p-2 cursor-pointer w-1/3"
+        class="relative z-10"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
       >
         <.icon
           name="hero-computer-desktop-micro"
-          class="size-4 opacity-75 hover:opacity-100"
+          class="size-3 opacity-100 hover:opacity-75"
         />
       </button>
 
       <button
-        class="flex p-2 cursor-pointer w-1/3"
+        class="relative z-10"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
       >
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-sun-micro" class="size-3 opacity-100 hover:opacity-75" />
       </button>
 
       <button
-        class="flex p-2 cursor-pointer w-1/3"
+        class="relative z-10"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
       >
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-moon-micro" class="size-3 opacity-100 hover:opacity-75" />
       </button>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders the user area with email/logout or sign in button.
+  """
+  def user_area(assigns) do
+    ~H"""
+    <div class="flex items-center gap-2">
+      <%= if @current_scope do %>
+        <span class="text-sm text-muted">{@current_scope.user.email}</span>
+        <.link href={~p"/log-out"} method="delete" class="btn btn-ghost btn-sm">
+          <.icon name="hero-arrow-right-on-rectangle" class="size-4" /> Log out
+        </.link>
+      <% else %>
+        <.button navigate={~p"/auth/google"} class="btn btn-primary btn-sm">
+          <.icon name="hero-user-plus" class="size-4" /> Sign in with Google
+        </.button>
+      <% end %>
     </div>
     """
   end
