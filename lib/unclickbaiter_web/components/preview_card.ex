@@ -50,7 +50,7 @@ defmodule UnclickbaiterWeb.Components.PreviewCard do
             <img
               src={@image_url}
               alt="Preview image"
-              class="mx-auto max-h-72 w-full object-contain"
+              class="mx-auto max-h-60 w-full object-contain"
               onerror="this.remove()"
             />
           </div>

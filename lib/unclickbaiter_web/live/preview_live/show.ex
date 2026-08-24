@@ -9,23 +9,22 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="max-w-3xl mx-auto mt-6 text-center">
-        <p class="mt-2">
-          The preview of the original preview has been overwritten by unclickbaiter.
-        </p>
-
-        <div class="mt-6">
-          <.button id="original-preview-link" href={@preview.url} variant="primary">
-            <.icon name="hero-arrow-right" class="size-4" />
-            Continue to {URI.parse(@preview.url).host || @preview.url}
-          </.button>
-          <p id="countdown-message" class="mt-3 text-sm text-base-content/60">
+        <div class="mt-4">
+          <p id="countdown-message" class="mb-3 text-sm text-base-content/60">
             Redirecting in <strong id="countdown">10</strong>
             seconds unless you press
             <button
               type="button"
               id="stop-countdown"
               class="btn btn-xs btn-warning"
-            >Stop</button>
+            >Stop!</button>
+          </p>
+          <.button id="original-preview-link" href={@preview.url} variant="primary">
+            <.icon name="hero-arrow-right" class="size-4" />
+            Continue to {URI.parse(@preview.url).host || @preview.url}
+          </.button>
+          <p class="mt-4 text-sm text-base-content/60">
+            The preview of the original preview has been overwritten by unclickbaiter:
           </p>
         </div>
 

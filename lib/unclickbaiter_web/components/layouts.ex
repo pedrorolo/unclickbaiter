@@ -45,7 +45,7 @@ defmodule UnclickbaiterWeb.Layouts do
             <.link href={~p"/"} class="hover:opacity-80 transition-opacity">unclickbaiter</.link>
           </h1>
           <p class="text-sm text-muted">
-            Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation.
+            Alternative social-media previews to existing pages
           </p>
         </div>
 
