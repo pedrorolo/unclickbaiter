@@ -7,7 +7,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-3xl mx-auto mt-6 text-center">
         <div class="mt-4">
           <p id="countdown-message" class="mb-3 text-sm text-base-content/60">
@@ -96,6 +96,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
 
     {:ok,
      socket
+     |> assign_new(:current_scope, fn -> nil end)
      |> assign(:preview, %{
        preview
        | original_preview_metadata:
