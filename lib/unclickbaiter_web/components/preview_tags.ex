@@ -8,6 +8,8 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
 
   use Phoenix.Component
 
+  @default_site_name "unclickbaiter"
+  @default_description "Share links with custom OpenGraph metadata — bringing awareness to clickbaits as a form of misinformation and disinformation."
   @default_type "website"
   @default_twitter_card "summary_large_image"
 
@@ -73,8 +75,9 @@ defmodule UnclickbaiterWeb.Components.PreviewTags do
 
   defp default_metadata do
     %{
-      title: "unclickbaiter",
-      description: "Alternative social-media previews to existing pages",
+      title: @default_site_name,
+      description: @default_description,
+      site_name: @default_site_name,
       type: @default_type,
       twitter_card: @default_twitter_card
     }

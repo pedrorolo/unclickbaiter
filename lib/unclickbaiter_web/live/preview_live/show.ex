@@ -108,21 +108,14 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
 
   defp preview_to_metadata(preview) do
     pm = preview.preview_metadata
-    base_url = UnclickbaiterWeb.Endpoint.url()
 
     %{
       title: pm.title,
       description: pm.description,
-      url: "#{base_url}/p/#{preview.slug}",
-      image: make_absolute(pm.image_url, base_url),
+      url: preview.url,
+      image: pm.image_url,
       type: "website",
       twitter_card: "summary_large_image"
     }
-  end
-
-  defp make_absolute(nil, _base_url), do: nil
-
-  defp make_absolute(url, base_url) do
-    if String.starts_with?(url, "http"), do: url, else: "#{base_url}#{url}"
   end
 end
