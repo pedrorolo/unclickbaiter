@@ -121,7 +121,7 @@ defmodule Unclickbaiter.MixProject do
       server: ["phx.server"],
       migrate: ["ecto.migrate"],
       remote_console: ["cmd gigalixir ps:remote_console"],
-      deploy: ["cmd git push gigalixir HEAD:main"]
+      deploy: ["cmd git push -f gigalixir HEAD:main"]
     ]
   end
 

@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <%= if assigns[:robots] do %>
+      <meta name="robots" content={assigns[:robots]} />
+    <% end %>
     <.preview_tags metadata={assigns[:metadata]} />
     <.live_title default="Unclickbaiter" phx-no-format>
       {assigns[:metadata][:title] || assigns[:page_title]}

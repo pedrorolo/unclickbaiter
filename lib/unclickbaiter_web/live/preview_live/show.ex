@@ -103,7 +103,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Show do
            preview.original_preview_metadata || %PreviewMetadata{}
      })
      |> assign(:metadata, preview_to_metadata(preview))
-     |> assign(:page_title, preview.preview_metadata.title)}
+     |> assign(:page_title, preview.preview_metadata.title)
+     |> assign(:robots, "index, follow, max-image-preview:large")}
   end
 
   defp preview_to_metadata(preview) do

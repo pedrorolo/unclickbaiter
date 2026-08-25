@@ -22,6 +22,10 @@ defmodule UnclickbaiterWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :allow_robots do
+    plug UnclickbaiterWeb.Plugs.AllowRobots
+  end
+
   defp http_basic_auth(conn, _opts) do
     case Application.get_env(:unclickbaiter, :secrets, %{})[:http_basic] do
       %{user: user, pass: pass} ->
@@ -50,7 +54,7 @@ defmodule UnclickbaiterWeb.Router do
   end
 
   scope "/", UnclickbaiterWeb do
-    pipe_through :browser
+    pipe_through [:browser, :allow_robots]
 
     live "/p/:slug", PreviewLive.Show, :show
   end
