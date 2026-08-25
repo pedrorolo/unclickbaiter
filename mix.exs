@@ -119,7 +119,9 @@ defmodule Unclickbaiter.MixProject do
         "credo --strict"
       ],
       server: ["phx.server"],
-      migrate: ["ecto.migrate"]
+      migrate: ["ecto.migrate"],
+      remote_console: ["cmd gigalixir ps:remote_console"],
+      deploy: ["cmd git push gigalixir HEAD:main"]
     ]
   end
 
