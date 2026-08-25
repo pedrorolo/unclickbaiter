@@ -12,16 +12,15 @@ defmodule Unclickbaiter.PreviewMetadataTest do
   setup do
     ProviderCache.clear()
     user = user_fixture()
-    scope = user_scope_fixture(user)
-    %{scope: scope}
+    %{user: user}
   end
 
   describe "fetch/1" do
     test "returns the stored original preview metadata when a preview exists for the url",
-         %{scope: scope} do
+         %{user: user} do
       url = "https://example.com/cached"
 
-      Unclickbaiter.Previews.create_preview(scope, %{
+      Unclickbaiter.Previews.create_preview(user, %{
         url: url,
         preview_metadata: %{
           title: "Preview title",
@@ -42,10 +41,10 @@ defmodule Unclickbaiter.PreviewMetadataTest do
     end
 
     test "delegates to the http fetch when the preview has no original preview metadata",
-         %{scope: scope} do
+         %{user: user} do
       url = "https://example.com"
 
-      Unclickbaiter.Previews.create_preview(scope, %{
+      Unclickbaiter.Previews.create_preview(user, %{
         url: url,
         preview_metadata: %{
           title: "Preview title",

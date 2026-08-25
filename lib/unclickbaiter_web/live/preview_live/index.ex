@@ -107,7 +107,8 @@ defmodule UnclickbaiterWeb.PreviewLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {previews, pagination} = list_previews(socket.assigns.current_scope, %{})
+    {previews, pagination} =
+      list_previews(socket.assigns.current_scope.user, %{})
 
     {:ok,
      socket
@@ -130,7 +131,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Index do
 
   def handle_event("paginate", %{"page" => page}, socket) do
     {previews, pagination} =
-      list_previews(socket.assigns.current_scope, %{"page" => page})
+      list_previews(socket.assigns.current_scope.user, %{"page" => page})
 
     {:noreply,
      socket
@@ -143,7 +144,7 @@ defmodule UnclickbaiterWeb.PreviewLive.Index do
     {:noreply, push_event(socket, "copy-to-clipboard", %{url: url})}
   end
 
-  defp list_previews(scope, params) do
-    Previews.list_previews(scope, params)
+  defp list_previews(user, params) do
+    Previews.list_previews(user, params)
   end
 end

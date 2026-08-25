@@ -30,7 +30,7 @@ defmodule UnclickbaiterWeb.Layouts do
 
   attr :current_scope, :map,
     default: nil,
-    doc: "the current scope (optional)"
+    doc: "the current user (optional)"
 
   slot :inner_block, required: true
 

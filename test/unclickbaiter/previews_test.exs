@@ -20,9 +20,9 @@ defmodule Unclickbaiter.SitesTest do
       %{user: user, scope: scope}
     end
 
-    test "list_previews/1 returns all previews for the scope", %{scope: scope} do
-      preview = preview_fixture(%{user_id: scope.user.id})
-      {previews, _pagination} = Previews.list_previews(scope)
+    test "list_previews/1 returns all previews for the user", %{user: user} do
+      preview = preview_fixture(%{user_id: user.id})
+      {previews, _pagination} = Previews.list_previews(user)
       assert length(previews) == 1
       assert hd(previews).id == preview.id
     end
@@ -37,7 +37,7 @@ defmodule Unclickbaiter.SitesTest do
       assert result.preview_metadata_id == preview.preview_metadata_id
     end
 
-    test "create_preview/2 with valid data creates a preview", %{scope: scope} do
+    test "create_preview/2 with valid data creates a preview", %{user: user} do
       valid_attrs = %{
         url: "some url",
         preview_metadata: %{
@@ -47,18 +47,18 @@ defmodule Unclickbaiter.SitesTest do
       }
 
       assert {:ok, %Preview{} = preview} =
-               Previews.create_preview(scope, valid_attrs)
+               Previews.create_preview(user, valid_attrs)
 
       assert preview.url == "some url"
       assert preview.preview_metadata.description == "some description"
       assert preview.preview_metadata.title == "some title"
       assert preview.slug
       assert String.length(preview.slug) == 5
-      assert preview.user_id == scope.user.id
+      assert preview.user_id == user.id
     end
 
     test "create_preview/2 with original_preview_metadata stores both metadata records",
-         %{scope: scope} do
+         %{user: user} do
       attrs = %{
         url: "some url",
         preview_metadata: %{
@@ -72,7 +72,7 @@ defmodule Unclickbaiter.SitesTest do
         }
       }
 
-      assert {:ok, %Preview{} = preview} = Previews.create_preview(scope, attrs)
+      assert {:ok, %Preview{} = preview} = Previews.create_preview(user, attrs)
       assert preview.preview_metadata.title == "some title"
       assert preview.original_preview_metadata.title == "original title"
 
@@ -81,10 +81,10 @@ defmodule Unclickbaiter.SitesTest do
     end
 
     test "create_preview/2 with invalid data returns error changeset", %{
-      scope: scope
+      user: user
     } do
       assert {:error, %Ecto.Changeset{}} =
-               Previews.create_preview(scope, @invalid_attrs)
+               Previews.create_preview(user, @invalid_attrs)
     end
 
     test "update_preview/2 with valid data updates the preview" do
@@ -152,9 +152,9 @@ defmodule Unclickbaiter.SitesTest do
     end
 
     test "delete_preview/1 keeps the original preview metadata when other previews reference it",
-         %{scope: scope} do
+         %{user: user} do
       {:ok, preview} =
-        Previews.create_preview(scope, %{
+        Previews.create_preview(user, %{
           url: "some url",
           preview_metadata: %{title: "title", description: "desc"},
           original_preview_metadata: %{
@@ -166,7 +166,7 @@ defmodule Unclickbaiter.SitesTest do
       original_pm = preview.original_preview_metadata
 
       {:ok, other_preview} =
-        Previews.create_preview(scope, %{
+        Previews.create_preview(user, %{
           url: "other url",
           preview_metadata: %{title: "other title", description: "other desc"}
         })

@@ -6,21 +6,20 @@ defmodule Unclickbaiter.Previews do
   import Ecto.Query, warn: false
   alias Unclickbaiter.Repo
 
-  alias Unclickbaiter.Accounts.Scope
   alias Unclickbaiter.PreviewMetadata.PreviewMetadata
   alias Unclickbaiter.Previews.Preview
   alias Unclickbaiter.Slug
 
   @doc """
-  Returns a page of previews for the given scope.
+  Returns a page of previews for the given user.
 
   ## Examples
 
-      iex> list_previews(scope)
-      {[%Preview{}, ...], %Flop.Meta{}}
+      iex> list_previews(user)
+      {[%Preview{}, ...], %{}}
 
   """
-  def list_previews(%Scope{user: user}, params \\ %{}) do
+  def list_previews(user, params \\ %{}) do
     %{"page" => page, "page_size" => page_size} =
       Map.merge(%{"page" => "1", "page_size" => "10"}, params)
 
@@ -90,14 +89,14 @@ defmodule Unclickbaiter.Previews do
 
   ## Examples
 
-      iex> create_preview(scope, %{field: value})
+      iex> create_preview(user, %{field: value})
       {:ok, %Preview{}}
 
-      iex> create_preview(scope, %{field: bad_value})
+      iex> create_preview(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_preview(%Scope{user: user}, attrs) do
+  def create_preview(user, attrs) do
     Slug.with_new_slug(
       Preview,
       fn changeset ->

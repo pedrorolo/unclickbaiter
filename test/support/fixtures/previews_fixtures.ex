@@ -5,28 +5,23 @@ defmodule Unclickbaiter.PreviewsFixtures do
   """
 
   import Unclickbaiter.AccountsFixtures
-  alias Unclickbaiter.Accounts.{Scope, User}
+  alias Unclickbaiter.Accounts.User
 
   @doc """
   Generate a preview.
   """
   def preview_fixture(attrs \\ %{}) do
-    user_id =
+    user =
       cond do
         Map.has_key?(attrs, :user_id) ->
-          attrs.user_id
+          %User{id: attrs.user_id}
 
         is_map_key(attrs, :user) and Map.has_key?(attrs.user, :id) ->
-          attrs.user.id
+          attrs.user
 
         true ->
-          user_fixture().id
+          user_fixture()
       end
-
-    scope =
-      Scope.for_user(%User{
-        id: user_id
-      })
 
     clean_attrs =
       attrs
@@ -37,7 +32,7 @@ defmodule Unclickbaiter.PreviewsFixtures do
       end)
 
     {:ok, preview} =
-      Unclickbaiter.Previews.create_preview(scope, %{
+      Unclickbaiter.Previews.create_preview(user, %{
         url: clean_attrs["url"] || "some url",
         preview_metadata:
           clean_attrs["preview_metadata"] ||

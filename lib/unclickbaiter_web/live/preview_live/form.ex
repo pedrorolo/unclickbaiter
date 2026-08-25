@@ -275,7 +275,10 @@ defmodule UnclickbaiterWeb.PreviewLive.Form do
   end
 
   defp save_preview(socket, :new, preview_params) do
-    case Previews.create_preview(socket.assigns.current_scope, preview_params) do
+    case Previews.create_preview(
+           socket.assigns.current_scope.user,
+           preview_params
+         ) do
       {:ok, preview} ->
         {:noreply,
          socket
