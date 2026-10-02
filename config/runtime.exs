@@ -135,4 +135,29 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Req
   #
   # See https://swoosh.hexdocs.pm/Swoosh.html#module-installation for details.
+
+  # Better Stack Logger - attach handler at runtime
+  if System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN") do
+    config :logger, :betterstack_logger,
+      betterstack_host: System.get_env("BETTERSTACK_LOG_HOST", "https://in.logs.betterstack.com"),
+      betterstack_source_token: System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
+      extra_fields: [env: "prod"],
+      upload_batch_max_size: 50,
+      upload_batch_interval_ms: 5000,
+      upload_failed_retry_count: 3,
+      upload_failed_retry_delay_ms: 1000
+
+    Logger.add_handler(:betterstack_logger, BetterStack.LoggerHandler, %{
+      level: :info,
+      config: %{
+        betterstack_host: System.get_env("BETTERSTACK_LOG_HOST", "https://in.logs.betterstack.com"),
+        betterstack_source_token: System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
+        extra_fields: [env: "prod"],
+        upload_batch_max_size: 50,
+        upload_batch_interval_ms: 5000,
+        upload_failed_retry_count: 3,
+        upload_failed_retry_delay_ms: 1000
+      }
+    })
+  end
 end

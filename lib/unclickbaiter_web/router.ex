@@ -59,6 +59,12 @@ defmodule UnclickbaiterWeb.Router do
     live "/p/:slug", PreviewLive.Show, :show
   end
 
+  scope "/", UnclickbaiterWeb do
+    pipe_through :api
+
+    get "/health", PageController, :health
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", UnclickbaiterWeb do
   #   pipe_through :api

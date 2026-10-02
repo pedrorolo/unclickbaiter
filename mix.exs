@@ -81,7 +81,9 @@ defmodule Unclickbaiter.MixProject do
       {:exvcr, "~> 0.17", only: :test},
       {:pre_commit, "~> 0.3.4", only: :dev},
       {:floki, "~> 0.36"},
-      {:fast_html, "~> 2.0"}
+      {:fast_html, "~> 2.0"},
+      {:betterstack_logger, "~> 1.0"},
+      {:sentry, "~> 10.0"}
     ]
   end
 
