@@ -6,6 +6,9 @@ defmodule UnclickbaiterWeb.PageController do
   end
 
   def health(conn, _params) do
-    json(conn, %{status: "ok", timestamp: DateTime.utc_now() |> DateTime.to_iso8601()})
+    json(conn, %{
+      status: "ok",
+      timestamp: DateTime.utc_now() |> DateTime.to_iso8601()
+    })
   end
 end
