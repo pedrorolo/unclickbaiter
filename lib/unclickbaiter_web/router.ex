@@ -22,6 +22,9 @@ defmodule UnclickbaiterWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :health do
+  end
+
   pipeline :allow_robots do
     plug UnclickbaiterWeb.Plugs.AllowRobots
   end
@@ -60,7 +63,7 @@ defmodule UnclickbaiterWeb.Router do
   end
 
   scope "/", UnclickbaiterWeb do
-    pipe_through :api
+    pipe_through :health
 
     get "/health", PageController, :health
   end
