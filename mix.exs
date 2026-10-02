@@ -23,7 +23,12 @@ defmodule Unclickbaiter.MixProject do
   def application do
     [
       mod: {Unclickbaiter.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :betterstack_logger,
+        :sentry
+      ]
     ]
   end
 
