@@ -141,27 +141,26 @@ if config_env() == :prod do
   # which reads `application:get_env(:betterstack_logger, :logger)`. It expects a
   # list of `{:handler, id, module, config}` tuples.
   if System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN") do
-    config :betterstack_logger, :logger,
-      [
-        {:handler, :betterstack_logs, :betterstack_logger,
-         %{
-           level: :info,
-           config: %{
-             betterstack_host:
-               System.get_env(
-                 "BETTERSTACK_LOG_HOST",
-                 "https://in.logs.betterstack.com"
-               ),
-             betterstack_source_token:
-               System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
-             extra_fields: [env: "prod"],
-             upload_batch_max_size: 50,
-             upload_batch_interval_ms: 5000,
-             upload_failed_retry_count: 3,
-             upload_failed_retry_delay_ms: 1000
-           }
-         }}
-      ]
+    config :betterstack_logger, :logger, [
+      {:handler, :betterstack_logs, :betterstack_logger,
+       %{
+         level: :info,
+         config: %{
+           betterstack_host:
+             System.get_env(
+               "BETTERSTACK_LOG_HOST",
+               "https://in.logs.betterstack.com"
+             ),
+           betterstack_source_token:
+             System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
+           extra_fields: [env: "prod"],
+           upload_batch_max_size: 50,
+           upload_batch_interval_ms: 5000,
+           upload_failed_retry_count: 3,
+           upload_failed_retry_delay_ms: 1000
+         }
+       }}
+    ]
   end
 
   # Sentry (Better Stack Error Tracking) - Sentry-compatible DSN
