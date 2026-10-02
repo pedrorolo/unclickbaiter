@@ -136,19 +136,41 @@ if config_env() == :prod do
   #
   # See https://swoosh.hexdocs.pm/Swoosh.html#module-installation for details.
 
-  # Better Stack Logger - attach handler at runtime
+  # Better Stack Logger - ships logs to Better Stack.
+  # `logger:add_handlers/1` expects a list of handler specs.
   if System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN") do
     config :logger, :betterstack_logger,
-      betterstack_host:
-        System.get_env(
-          "BETTERSTACK_LOG_HOST",
-          "https://in.logs.betterstack.com"
-        ),
-      betterstack_source_token: System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
-      extra_fields: [env: "prod"],
-      upload_batch_max_size: 50,
-      upload_batch_interval_ms: 5000,
-      upload_failed_retry_count: 3,
-      upload_failed_retry_delay_ms: 1000
+      [
+        handler: [
+          module: :betterstack_logger,
+          level: :info,
+          config: %{
+            betterstack_host:
+              System.get_env(
+                "BETTERSTACK_LOG_HOST",
+                "https://in.logs.betterstack.com"
+              ),
+            betterstack_source_token:
+              System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
+            extra_fields: [env: "prod"],
+            upload_batch_max_size: 50,
+            upload_batch_interval_ms: 5000,
+            upload_failed_retry_count: 3,
+            upload_failed_retry_delay_ms: 1000
+          }
+        ]
+      ]
+  end
+
+  # Sentry (Better Stack Error Tracking) - Sentry-compatible DSN
+  if System.get_env("BETTERSTACK_SENTRY_DSN") do
+    config :sentry,
+      dsn: System.get_env("BETTERSTACK_SENTRY_DSN"),
+      environment_name: "prod",
+      enable_source_code_context: true,
+      root_source_code_paths: [File.cwd!()],
+      tags: %{
+        env: "prod"
+      }
   end
 end

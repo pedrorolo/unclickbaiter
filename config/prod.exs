@@ -29,38 +29,9 @@ config :swoosh, local: false
 # Do not print debug messages in production
 config :logger, level: :info
 
-# Better Stack Logger - ships logs to Better Stack
-config :logger, :betterstack_logger, [
-  handler: [
-    module: :betterstack_logger,
-    level: :info,
-    config: %{
-      betterstack_host:
-        System.get_env(
-          "BETTERSTACK_LOG_HOST",
-          "https://in.logs.betterstack.com"
-        ),
-      betterstack_source_token:
-        System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
-      extra_fields: [env: "prod"],
-      upload_batch_max_size: 50,
-      upload_batch_interval_ms: 5000,
-      upload_failed_retry_count: 3,
-      upload_failed_retry_delay_ms: 1000
-    }
-  ]
-]
-
-# Sentry (Better Stack Error Tracking) - Sentry-compatible DSN
-config :sentry,
-  dsn: System.get_env("BETTERSTACK_SENTRY_DSN"),
-  environment_name: "prod",
-  enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()],
-  tags: %{
-    env: "prod"
-  },
-  included_environments: [:prod]
+# Better Stack Logger and Sentry are configured in config/runtime.exs,
+# because their values depend on environment variables that are only
+# available at boot time in a release (not at compile time).
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
