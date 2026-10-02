@@ -30,22 +30,27 @@ config :swoosh, local: false
 config :logger, level: :info
 
 # Better Stack Logger - ships logs to Better Stack
-config :logger, handlers: [
-  betterstack_logs: [
-    module: :betterstack_logger,
-    level: :info,
-    config: [
-      betterstack_host:
-        System.get_env("BETTERSTACK_LOG_HOST", "https://in.logs.betterstack.com"),
-      betterstack_source_token: System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
-      extra_fields: [env: "prod"],
-      upload_batch_max_size: 50,
-      upload_batch_interval_ms: 5000,
-      upload_failed_retry_count: 3,
-      upload_failed_retry_delay_ms: 1000
+config :logger,
+  handlers: [
+    betterstack_logs: [
+      module: :betterstack_logger,
+      level: :info,
+      config: %{
+        betterstack_host:
+          System.get_env(
+            "BETTERSTACK_LOG_HOST",
+            "https://in.logs.betterstack.com"
+          ),
+        betterstack_source_token:
+          System.get_env("BETTERSTACK_LOG_SOURCE_TOKEN"),
+        extra_fields: [env: "prod"],
+        upload_batch_max_size: 50,
+        upload_batch_interval_ms: 5000,
+        upload_failed_retry_count: 3,
+        upload_failed_retry_delay_ms: 1000
+      }
     ]
   ]
-]
 
 # Sentry (Better Stack Error Tracking) - Sentry-compatible DSN
 config :sentry,
