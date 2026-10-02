@@ -30,7 +30,7 @@ config :swoosh, local: false
 config :logger, level: :info
 
 # Better Stack Logger - ships logs to Better Stack
-config :logger, :betterstack_logger,
+config :logger, :betterstack_logger, [
   handler: [
     module: :betterstack_logger,
     level: :info,
@@ -49,6 +49,7 @@ config :logger, :betterstack_logger,
       upload_failed_retry_delay_ms: 1000
     }
   ]
+]
 
 # Sentry (Better Stack Error Tracking) - Sentry-compatible DSN
 config :sentry,
